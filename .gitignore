@@ -1,0 +1,8 @@
+.docker/nginx/certs
+.docker/.postgres
+.docker/ollama/*
+
+src/vendor
+src/internal/template_cache/*
+
+sshpass

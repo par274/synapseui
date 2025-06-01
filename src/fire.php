@@ -14,7 +14,8 @@
  *  
  * The maker of this software: Par274
  * Author: https://www.r10.net/members/90047-scarecrow.html | https://github.com/par274 
- * The software uses ParFramework2, this infrastructure cannot be used by third parties or any other project can not be produced. !!                                                                                         
+ * This software was developed with a custom application framework called Synaptic Framework(Par3).
+ * This application framework is built to use a custom template engine, separate services with a container structure, and generally create native applications.
  */
 
 //Root Dir
@@ -34,7 +35,6 @@ return (function (): \PlatformBridge\BridgeFoundation|bool
     if (!file_exists(ROOT_DIR . '/vendor/autoload.php'))
     {
         throw new \Exception("Autoloader file not found, please run 'composer update' command on root dir.");
-
         return false;
     }
 
@@ -43,7 +43,6 @@ return (function (): \PlatformBridge\BridgeFoundation|bool
     if (!file_exists(ROOT_DIR . '/.env'))
     {
         throw new \Exception(".env config file not found.");
-
         return false;
     }
 

@@ -1,4 +1,4 @@
-# A web-based and modular with graph/node-powered AI interface
+## A web-based and modular with graph/node-powered AI interface
 
 ```
  .oooooo..o                                                                ooooo      ooo ooooo 
@@ -12,7 +12,7 @@ oo    .d8P    `888'     888   888  d8(  888   888   888 o.  )88b 888    .o  `88.
            `Y8P'                             o888o                                              
 ```
 ---
-# Getting Started
+## Getting Started
 
 ### GPU Support
 First you need change `OLLAMA_UTILIZATION` CPU to GPU. And install NVIDIA Container Toolkit.

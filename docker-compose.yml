@@ -1,4 +1,5 @@
-version: "3.9"
+include:
+  - service-ollama-${OLLAMA_UTILIZATION}.yml
 
 services:
   nginx:
@@ -54,16 +55,6 @@ services:
       ADMINER_DEFAULT_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - synui_db
-  ollama:
-    image: docker.io/ollama/ollama:latest
-    volumes:
-      - ./.docker/ollama:/root/.ollama
-    container_name: ollama
-    tty: true
-    ports:
-      - 11434:11434
-    networks:
-      - synui_app
 networks:
   synui_app:
   synui_db:

@@ -1,0 +1,13 @@
+services:
+  llamacpp:
+    image: ghcr.io/ggml-org/llama.cpp:light
+    environment:
+      - LLAMA_ARG_CTX_SIZE=2048
+    volumes:
+      - ./.docker/llamacpp/models:/root/.llamacpp/models
+    container_name: llamacpp
+    tty: true
+    ports:
+      - 11800:11800
+    networks:
+      - synui_app

@@ -1,5 +1,5 @@
 include:
-  - docker-compose-ollama.${OLLAMA_UTILIZATION}.yml
+  - docker-compose-${LLM_MANAGER}.${UTILIZATION}.yml
 
 services:
   nginx:

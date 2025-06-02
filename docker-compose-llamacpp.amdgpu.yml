@@ -1,0 +1,23 @@
+services:
+  llamacpp:
+    image: ghcr.io/ggml-org/llama.cpp:light-rocm
+    environment:
+      HSA_OVERRIDE_GFX_VERSION: "11.0.0"
+      HIP_VISIBLE_DEVICES: "0"
+      LLAMA_ARG_CTX_SIZE: "2048"
+      LLAMA_ARG_N_GPU_LAYERS: "99"
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    security_opt:
+      - seccomp:unconfined
+    group_add:
+      - video
+    volumes:
+      - ./.docker/llamacpp/models:/root/.llamacpp/models
+    container_name: llamacpp
+    tty: true
+    ports:
+      - 11800:11800
+    networks:
+      - synui_app

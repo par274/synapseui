@@ -1,6 +1,6 @@
 services:
   ollama:
-    image: docker.io/ollama/ollama:latest
+    image: ollama/ollama:latest
     volumes:
       - ./.docker/ollama:/root/.ollama
     container_name: ollama
@@ -9,8 +9,3 @@ services:
       - 11434:11434
     networks:
       - synui_app
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]

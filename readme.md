@@ -14,6 +14,11 @@ oo    .d8P    `888'     888   888  d8(  888   888   888 o.  )88b 888    .o  `88.
 ---
 ## Getting Started
 
+## Which LLM Manager's are supported?
+Currently fully support for `ollama` but `llama.cpp` is developed. You have to define it in the `.env` file in the `LLM_MANAGER` variable and choose which one Docker will install.
+
+But you should know that this will only apply to Docker.
+
 ## GPU Support
 First you must change the `OLLAMA_UTILIZATION` cpu to NVIDIA(nvgpu) or AMD ROCm(amdgpu).
 
@@ -22,7 +27,7 @@ Full support GPU list: https://github.com/ollama/ollama/blob/main/docs/gpu.md
 The following steps are for Ubuntu.
 
 ### NVIDIA
-`OLLAMA_UTILIZATION=nvgpu`
+`UTILIZATION=nvgpu`
 
 If you are going to use NVIDIA GPU, install NVIDIA Container Toolkit.
 
@@ -42,7 +47,7 @@ sudo systemctl restart docker
 ```
 
 ### AMD ROCm
-`OLLAMA_UTILIZATION=amdgpu`
+`UTILIZATION=amdgpu`
 
 If you use AMD GPU and it has ROCm support, you can use it too. First, you need to install `amdgpu-dkms`. If you are already install ROCm, you have it. So you can skip this step.
 

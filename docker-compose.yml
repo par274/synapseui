@@ -1,5 +1,5 @@
 include:
-  - ./.services/${LLM_MANAGER}/docker-compose-${LLM_MANAGER}.${UTILIZATION}.yml
+  - ./docker-compose-${LLM_MANAGER}.${UTILIZATION}.yml
 
 services:
   nginx:

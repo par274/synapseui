@@ -1,5 +1,4 @@
-.services/ollama/.docker/ollama/*
-.services/llamacpp/.docker/llamacpp/*
+.services
 
 .docker/nginx/certs
 .docker/.postgres

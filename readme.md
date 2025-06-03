@@ -61,3 +61,17 @@ sudo apt install rocm
 ```
 
 And reboot your system.
+
+## Framework
+This software was developed with a custom application framework called Synaptic Framework(Par3).
+
+This application framework is built to use a custom template engine, separate services with a container structure, and generally create native applications.
+
+## Packages used in this project
+- [Symfony/http-foundation](https://symfony.com/doc/current/components/http_foundation.html)
+- [Vlucas/phpdotenv](https://github.com/vlucas/phpdotenv)
+- [Nikic/fast-route](https://github.com/nikic/FastRoute)
+- [Doctrine/DBAL](https://github.com/doctrine/dbal)
+
+### License
+SynapseUI is a open-source project and licensed under the MIT License(MIT). Please read the [license file](https://github.com/par274/synapseui/blob/master/license.md).

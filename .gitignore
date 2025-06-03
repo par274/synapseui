@@ -1,7 +1,8 @@
+.services/ollama/.docker/ollama/*
+.services/llamacpp/.docker/llamacpp/*
+
 .docker/nginx/certs
 .docker/.postgres
-.docker/ollama/*
-.docker/llamacpp/*
 
 src/vendor
 src/internal/template_cache/*

@@ -3,7 +3,7 @@
 **SynapseUI** is a project I've been planning and developing for some time.
 
 The goal is to create a UI to manage AI LLM (Large Language Model) workflows.  
-It is the **first and only UI designed to manage models using a chain-based structure**, and it will follow a **node-based** design, inspired by tools like **ComfyUI**.
+It is the **first and only UI designed to manage models using a chain-based structure**, and it will follow a **node-based** design, inspired by **ComfyUI**.
 
 ---
 
@@ -63,8 +63,6 @@ Input:
 "What is in this image? Draw it and explain it."
 → The prompt is sent to the `IntentClassifierNode`.
 
----
-
 [IntentClassifierNode]
 
 Task: 
@@ -84,8 +82,6 @@ Output:
 
 → Based on the detected intent, relevant downstream nodes are activated.
 
----
-
 Activated Nodes:
 
 [VisionNode]  
@@ -96,8 +92,6 @@ Base64-encoded image
 Output:  
 "A robot is holding a small white flower in a field."
 
----
-
 [ImageGenNode]  
 
 Input:
@@ -106,8 +100,6 @@ Input:
 Output:
 
 Base64-encoded image (to be passed to the OutputDisplay)
-
----
 
 [SystemPromptNode]  
 
@@ -128,12 +120,11 @@ Aggregated Inputs:
 
 [Model]
 
-`mistral:instruct`
+mistral:instruct
 
 [Generated Response]
 
 The image shows a robot holding a small white flower. This may symbolize the relationship between artificial intelligence and human-like emotions.
----
 
 [RunNode]
 
@@ -150,7 +141,7 @@ The image shows a robot holding a small white flower. This may symbolize the rel
 
 ![Node example](https://raw.githubusercontent.com/par274/synapseui/main/.github/images/SynapseUINode.png)
 
-he project is in a very early stage for now, I've made the Github page public but there's nothing to test at the moment.
+The project is in a very early stage for now, I've made the Github page public but there's nothing to test at the moment.
  
 I wrote a template engine with a custom syntax structure(XenForo like) for this project, it has a framework that works more container-based, I named it SynapticFramework, but in the end it is a Par3. Currently, it supports structures such as GPU passtrough. There is an Ollama service and I have already written an API management for Ollama on the PHP side.
 

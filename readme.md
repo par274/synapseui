@@ -14,6 +14,8 @@ oo    .d8P    `888'     888   888  d8(  888   888   888 o.  )88b 888    .o  `88.
 ---
 ## Getting Started
 
+More info for SynapseUI, because very very early stage. [Introduce for SynapseUI](https://github.com/par274/synapseui/blob/main/.github/introduce.md)
+
 ## Which LLM Manager's are supported?
 Currently fully support for `ollama` but `llama.cpp` is developed. You have to define it in the `.env` file in the `LLM_MANAGER` variable and choose which one Docker will install.
 
@@ -74,4 +76,4 @@ This application framework is built to use a custom template engine, separate se
 - [Doctrine/DBAL](https://github.com/doctrine/dbal)
 
 ### License
-SynapseUI is a open-source project and licensed under the MIT License(MIT). Please read the [license file](https://github.com/par274/synapseui/blob/master/license.md).
+SynapseUI is a open-source project and licensed under the MIT License(MIT). Please read the [license file](https://github.com/par274/synapseui/blob/main/license.md).

@@ -148,7 +148,7 @@ The image shows a robot holding a small white flower. This may symbolize the rel
 - Vision caption: Included in model context but hidden from the user
 ```
 
-![Node example](https://raw.githubusercontent.com/par273/synapseui/main/.github/images/SynapseUINode.png)
+![Node example](https://raw.githubusercontent.com/par274/synapseui/main/.github/images/SynapseUINode.png)
 
 he project is in a very early stage for now, I've made the Github page public but there's nothing to test at the moment.
  

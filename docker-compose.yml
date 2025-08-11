@@ -22,6 +22,7 @@ services:
         TIMEZONE: ${TIMEZONE}
         PHP_VERSION: ${PHP_VERSION}
         SERVER: ${SERVER}
+        LLM_MANAGER: ${LLM_MANAGER}
     volumes:
       - ./:/workspace
       - ./sshpass:/root/sshpass

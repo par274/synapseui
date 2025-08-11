@@ -5,6 +5,7 @@ FROM php:${PHP_VERSION}-${SERVER}
 
 ARG SERVER
 ARG TIMEZONE
+ARG LLM_MANAGER
 
 COPY ./php.ini /usr/local/etc/php/conf.d/docker-php-config.ini
 
@@ -46,7 +47,7 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} >
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY ./bin/ollama.sh /usr/local/bin/ollama
-RUN chmod +x /usr/local/bin/ollama
+COPY ./bin/${LLM_MANAGER}.sh /usr/local/bin/${LLM_MANAGER}
+RUN chmod +x /usr/local/bin/${LLM_MANAGER}
 
 WORKDIR /workspace

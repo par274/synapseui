@@ -5,7 +5,7 @@ namespace NativePlatform\Adapters\Ollama;
 use GuzzleHttp\Exception\GuzzleException;
 
 use NativePlatform\Adapters\AdapterClient;
-use NativePlatform\Adapters\AdapterInterface;
+use NativePlatform\Adapters\Ollama\AdapterInterface;
 use NativePlatform\Adapters\Ollama\Response\Chat\ChatResponse;
 use NativePlatform\Adapters\Ollama\Response\Completion\CompletionResponse;
 use NativePlatform\Adapters\Ollama\Response\Model\PullResponse;

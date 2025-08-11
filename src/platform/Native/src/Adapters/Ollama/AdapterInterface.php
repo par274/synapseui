@@ -1,6 +1,6 @@
 <?php
 
-namespace NativePlatform\Adapters;
+namespace NativePlatform\Adapters\Ollama;
 
 use NativePlatform\Adapters\Ollama\Response\Chat\ChatResponse;
 use NativePlatform\Adapters\Ollama\Response\Completion\CompletionResponse;

@@ -15,6 +15,7 @@ use NativePlatform\SubContainer\Security\GoogleRecaptchaValidator;
 use NativePlatform\SubContainer\Security\CloudflareTurnstileValidator;
 use NativePlatform\Adapters\AdapterManager as LLMAdapterManager;
 use NativePlatform\Adapters\Ollama\OllamaAdapterClient;
+use NativePlatform\Scopes\RenderScope;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
@@ -109,6 +110,13 @@ class Bridge
                 $c->get('app:response'),
                 $c->get('db:em')->user,
                 $c->get('security:captcha')
+            );
+        });
+
+        $this->container->set('scope:renderer', function (ServiceContainer $c)
+        {
+            return new RenderScope(
+                $c->get('app:response')
             );
         });
 

@@ -8,14 +8,16 @@ use NativePlatform\Db\EntityManager;
 use NativePlatform\Templater\Engine as TemplateEngine;
 use NativePlatform\Routes\Controller;
 use NativePlatform\SubContainer\Style\UiInterface;
-use NativePlatform\Adapters\AdapterInterface;
+use NativePlatform\Scopes\RenderScope;
+
+use NativePlatform\Adapters\Ollama\AdapterInterface;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class IndexController extends Controller
 {
-    public function index()
+    public function index(): RenderScope|null
     {
         /** @var BridgeConfig $config */
         $config = $this->container->get('app:config');
@@ -40,6 +42,9 @@ class IndexController extends Controller
 
         /** @var UiInterface $ui */
         $ui = $this->container->get('templater:ui')->driver();
+
+        /** @var RenderScope */
+        $renderer = $this->container->get('scope:renderer');
 
         /** @var AdapterInterface $llmAdapter */
         $llmAdapter = $this->container->get('app:llm.adapter_manager')->get();
@@ -81,7 +86,6 @@ class IndexController extends Controller
             ]
         );
 
-        $response->headers->set('Content-Type', 'text/html; charset=utf-8');
-        $response->setContent($template);
+        return $renderer->finalRender('html', $template);
     }
 }

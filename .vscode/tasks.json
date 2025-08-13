@@ -6,6 +6,12 @@
             "type": "shell",
             "command": "ollama",
             "problemMatcher": []
+        },
+        {
+            "label": "Start llama.cpp",
+            "type": "shell",
+            "command": "llamacpp",
+            "problemMatcher": []
         }
     ]
 }

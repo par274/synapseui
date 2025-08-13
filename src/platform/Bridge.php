@@ -71,7 +71,7 @@ class Bridge
         $this->container->set('db:em', fn() => $this->em);
 
         $this->container->set('templater:ui.daisy', fn() => new DaisyUI());
-        $this->container->set('templater:ui', function ($c)
+        $this->container->set('templater:ui', function (ServiceContainer $c)
         {
             return new UiManager(
                 $c->get('app:config'),
@@ -80,8 +80,9 @@ class Bridge
                 ]
             );
         });
-        $this->container->set('app:templater', function ($c)
+        $this->container->set('app:templater', function (ServiceContainer $c)
         {
+            /** @var UiManager $manager */
             $manager = $c->get('templater:ui');
             $manager->use('daisyui');
             $this->templater->setUI(
@@ -93,7 +94,7 @@ class Bridge
 
         $this->container->set('security:captcha.google', fn() => new GoogleRecaptchaValidator($this->config));
         $this->container->set('security:captcha.cloudflare', fn() => new CloudflareTurnstileValidator($this->config));
-        $this->container->set('security:captcha', function ($c)
+        $this->container->set('security:captcha', function (ServiceContainer $c)
         {
             return new CaptchaManager(
                 $c->get('app:config'),
@@ -120,8 +121,9 @@ class Bridge
             );
         });
 
-        $this->container->set('llm:adapter.ollama', function ($c)
+        $this->container->set('llm:adapter.ollama', function (ServiceContainer $c)
         {
+            /** @var BridgeConfig $config */
             $config = $c->get('app:config');
             return match ($config->getLLMAdapterMethod())
             {
@@ -129,8 +131,9 @@ class Bridge
                 default => new OllamaAdapterClient()
             };
         });
-        $this->container->set('app:llm.adapter_manager', function ($c)
+        $this->container->set('app:llm.adapter_manager', function (ServiceContainer $c)
         {
+            /** @var BridgeConfig $config */
             $config = $c->get('app:config');
             $manager = new LLMAdapterManager(
                 $config,

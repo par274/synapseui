@@ -1,10 +1,14 @@
 services:
   llamacpp:
-    image: ghcr.io/ggml-org/llama.cpp:light-cuda
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    profiles: [manual]
     environment:
-      GGML_CUDA_NO_PINNED: "1"
-      LLAMA_ARG_CTX_SIZE: "2048"
-      LLAMA_ARG_N_GPU_LAYERS: "99"
+      GGML_CUDA_NO_PINNED: 1
+      LLAMA_ARG_CTX_SIZE: 2048
+      LLAMA_ARG_N_GPU_LAYERS: 99
+      LLAMA_ARG_MODEL: /root/.llamacpp/models/gemma-3-1b-it-Q4_K_M.gguf
+      LLAMA_ARG_PORT: 11800
+      LLAMA_ARG_NO_WEBUI: 1
     volumes:
       - ./.docker/llamacpp/models:/root/.llamacpp/models
     container_name: llamacpp

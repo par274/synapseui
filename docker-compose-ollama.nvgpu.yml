@@ -1,6 +1,7 @@
 services:
   ollama:
     image: ollama/ollama:latest
+    profiles: [manual]
     volumes:
       - ./.docker/ollama:/root/.ollama
     container_name: ollama

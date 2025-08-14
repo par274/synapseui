@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace NativePlatform\Adapters\Ollama;
 
 use NativePlatform\Adapters\AdapterClient;
+use NativePlatform\Adapters\Ollama\StreamIterator;
+use NativePlatform\Adapters\Ollama\TokenStreamReader;
 use NativePlatform\Adapters\Ollama\Response\GenerateCompletionResponse;
 use NativePlatform\Adapters\Ollama\Response\GenerateChatResponse;
 use NativePlatform\Adapters\Ollama\Response\CreateModelResponse;
@@ -17,7 +19,6 @@ use NativePlatform\Adapters\Ollama\Response\PushModelResponse;
 use NativePlatform\Adapters\Ollama\Response\EmbedResponse;
 use NativePlatform\Adapters\Ollama\Response\RunningModelsResponse;
 use NativePlatform\Adapters\Ollama\Response\VersionResponse;
-use NativePlatform\Adapters\Ollama\StreamIterator;
 
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;

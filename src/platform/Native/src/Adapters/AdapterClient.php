@@ -7,7 +7,7 @@ use GuzzleHttp\Client;
 abstract class AdapterClient
 {
     protected Client $client;
-    protected string $baseUrl;
+    protected readonly string $baseUrl;
 
     public function setConfig(array $config): void
     {

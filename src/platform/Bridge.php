@@ -14,7 +14,7 @@ use NativePlatform\SubContainer\Security\CaptchaManager;
 use NativePlatform\SubContainer\Security\GoogleRecaptchaValidator;
 use NativePlatform\SubContainer\Security\CloudflareTurnstileValidator;
 use NativePlatform\Adapters\AdapterManager as LLMAdapterManager;
-use NativePlatform\Adapters\Ollama\OllamaAdapterClient;
+use NativePlatform\Adapters\Ollama\Client as OllamaAdapterClient;
 use NativePlatform\Scopes\RenderScope;
 
 use Doctrine\DBAL\Connection;

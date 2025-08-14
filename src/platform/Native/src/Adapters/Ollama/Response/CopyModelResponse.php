@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace NativePlatform\Adapters\Ollama\Response;
 
 /**
- * Response for `/api/version`.
+ * Response for `/api/copy`. The API returns a plain JSON object with a single `status` key.
  */
-final class VersionResponse
+final class CopyModelResponse
 {
-    public string $version;
+    public string $status;
 
     private function __construct()
     {
@@ -19,9 +19,9 @@ final class VersionResponse
     public static function fromArray(array $data): self
     {
         $obj = new self();
-        if (isset($data['version']))
+        if (isset($data['status']))
         {
-            $obj->version = $data['version'];
+            $obj->status = $data['status'];
         }
         return $obj;
     }

@@ -19,6 +19,9 @@ More info for SynapseUI, because very very early stage. [Introduce for SynapseUI
 ## Which LLM Manager's are supported?
 Currently fully support for `ollama` but `llama.cpp` is developed. You have to define it in the `.env` file in the `LLM_MANAGER` variable and choose which one Docker will install.
 
+- [Ollama API](https://github.com/par274/synapseui/tree/main/src/platform/Native/src/Adapters/Ollama)
+- [llama.cpp API](https://github.com/par274/synapseui/tree/main/src/platform/Native/src/Adapters/LLamacpp)
+
 But you should know that this will only apply to Docker.
 
 ## GPU Support

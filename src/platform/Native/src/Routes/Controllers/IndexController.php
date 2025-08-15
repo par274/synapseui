@@ -47,7 +47,7 @@ class IndexController extends Controller
         /** @var RenderScope */
         $renderer = $this->container->get('scope:renderer');
 
-        /** @var LLamacppClientInterface $llmAdapter */
+        /** @var LLamacppClientInterface|OllamaClientInterface $llmAdapter */
         $llmAdapter = $this->container->get('app:llm.adapter_manager')->get();
 
         $payload = [

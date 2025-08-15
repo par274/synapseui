@@ -15,6 +15,7 @@ use NativePlatform\SubContainer\Security\GoogleRecaptchaValidator;
 use NativePlatform\SubContainer\Security\CloudflareTurnstileValidator;
 use NativePlatform\Adapters\AdapterManager as LLMAdapterManager;
 use NativePlatform\Adapters\Ollama\Client as OllamaAdapterClient;
+use NativePlatform\Adapters\LLamacpp\Client as LLamacppAdapterClient;
 use NativePlatform\Scopes\RenderScope;
 
 use Doctrine\DBAL\Connection;
@@ -131,6 +132,16 @@ class Bridge
                 default => new OllamaAdapterClient()
             };
         });
+        $this->container->set('llm:adapter.llamacpp', function (ServiceContainer $c)
+        {
+            /** @var BridgeConfig $config */
+            $config = $c->get('app:config');
+            return match ($config->getLLMAdapterMethod())
+            {
+                'client' => new LLamacppAdapterClient(),
+                default => new LLamacppAdapterClient()
+            };
+        });
         $this->container->set('app:llm.adapter_manager', function (ServiceContainer $c)
         {
             /** @var BridgeConfig $config */
@@ -139,6 +150,7 @@ class Bridge
                 $config,
                 [
                     'ollama' => $c->get('llm:adapter.ollama'),
+                    'llamacpp' => $c->get('llm:adapter.llamacpp')
                 ]
             );
             $manager->use($config->getLLMAdapter());

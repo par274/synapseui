@@ -24,6 +24,147 @@ use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
+ * -------------------------------
+ * 1. Generate completion
+ * -------------------------------
+ *
+ * 1a. Non-streaming completion
+ * @example
+ * $response = $client->generate([
+ *     'model' => 'ollama-model',
+ *     'prompt' => 'Write a short story about AI.'
+ * ], false);
+ * echo $response->getText();
+ *
+ * 1b. Streaming completion
+ * @example
+ * $stream = $client->generate([
+ *     'model' => 'ollama-model',
+ *     'prompt' => 'Explain quantum computing.'
+ * ]);
+ *
+ * foreach ($stream as $chunk) {
+ *     echo $chunk;
+ * }
+ *
+ * 1c. Token-level streaming with callback
+ * @example
+ * $client->generate([
+ *     'model' => 'ollama-model',
+ *     'prompt' => 'Tell a joke about AI.'
+ * ], true, function(string $token) {
+ *     echo $token;
+ * });
+ */
+
+/**
+ * -------------------------------
+ * 2. Chat completion
+ * -------------------------------
+ *
+ * 2a. Non-streaming chat
+ * @example
+ * $chat = $client->chat([
+ *     'model' => 'ollama-model',
+ *     'messages' => [
+ *         ['role' => 'user', 'content' => 'Hello, how are you?']
+ *     ]
+ * ], false);
+ * echo $chat->getMessage();
+ *
+ * 2b. Streaming chat
+ * @example
+ * $streamChat = $client->chat([
+ *     'model' => 'ollama-model',
+ *     'messages' => [
+ *         ['role' => 'user', 'content' => 'Tell a story about a robot.']
+ *     ]
+ * ]);
+ *
+ * foreach ($streamChat as $chunk) {
+ *     echo $chunk;
+ * }
+ *
+ * 2c. Token-level streaming chat
+ * @example
+ * $client->chat([
+ *     'model' => 'ollama-model',
+ *     'messages' => [
+ *         ['role' => 'user', 'content' => 'Write a funny joke about AI.']
+ *     ]
+ * ], true, function(string $token) {
+ *     echo $token;
+ * });
+ */
+
+/**
+ * -------------------------------
+ * 3. Model management
+ * -------------------------------
+ *
+ * Create a model:
+ * @example
+ * $create = $client->createModel(['model' => 'base-model', 'new_name' => 'my-model']);
+ *
+ * List models:
+ * @example
+ * $models = $client->listModels();
+ *
+ * Show model info:
+ * @example
+ * $info = $client->showModel('my-model', true);
+ *
+ * Copy a model:
+ * @example
+ * $copy = $client->copy('my-model', 'my-model-copy');
+ *
+ * Delete a model:
+ * @example
+ * $delete = $client->delete('my-model-copy');
+ *
+ * Pull a model:
+ * @example
+ * $pull = $client->pull('remote-model');
+ *
+ * Push a model:
+ * @example
+ * $push = $client->push('my-model');
+ */
+
+/**
+ * -------------------------------
+ * 4. Embeddings
+ * -------------------------------
+ *
+ * @example
+ * $embedding = $client->embed([
+ *     'model' => 'ollama-model',
+ *     'input' => 'AI is fascinating'
+ * ]);
+ * print_r($embedding->getVector());
+ */
+
+/**
+ * -------------------------------
+ * 5. Running models
+ * -------------------------------
+ *
+ * @example
+ * $running = $client->runningModels();
+ * print_r($running->getModels());
+ */
+
+/**
+ * -------------------------------
+ * 6. Version
+ * -------------------------------
+ *
+ * @example
+ * $version = $client->version();
+ * echo $version->getVersion();
+ */
+
+/**
  * Concrete implementation of {@see ClientInterface} using Guzzle.
  */
 final class Client extends AdapterClient implements ClientInterface

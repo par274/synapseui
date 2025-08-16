@@ -3,6 +3,8 @@
 .docker/ollama/*
 .docker/llamacpp/*
 
+logs/*
+
 src/vendor
 src/internal/template_cache/*
 

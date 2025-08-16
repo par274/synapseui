@@ -8,6 +8,7 @@ services:
     volumes:
       - ./${WWW_PATH}:/workspace/src
       - ./.docker/nginx/certs:/etc/nginx/ssl
+      - ./logs/nginx:/var/log/nginx
     ports:
       - 80:80
       - 443:443
@@ -26,6 +27,8 @@ services:
     volumes:
       - ./:/workspace
       - ./sshpass:/root/sshpass
+      - ./logs/php:/usr/local/var/log
+      - ./logs/php/archive:/usr/local/var/log/archive
     networks:
       - synui_app
       - synui_db

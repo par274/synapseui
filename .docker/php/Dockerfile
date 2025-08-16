@@ -9,6 +9,11 @@ ARG LLM_MANAGER
 
 COPY ./php.ini /usr/local/etc/php/conf.d/docker-php-config.ini
 
+RUN mkdir -p /usr/local/var/log /usr/local/var/log/archive && chown www-data:www-data /usr/local/var/log /usr/local/var/log/archive
+COPY ./docker-php-entrypoint.sh /usr/local/bin/docker-php-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-php-entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/docker-php-entrypoint.sh"]
+
 RUN if [ "${SERVER}" = "apache" ] ; then \
         a2enmod rewrite; \
     fi

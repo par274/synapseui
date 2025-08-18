@@ -39,4 +39,14 @@ class RenderScope
 
         return;
     }
+
+    /**
+     * Send buffer info to page. If send() is needed and you are not in the controller, it provides standalone use.
+     *
+     * @return Response
+     */
+    public function sendBuffer(): Response
+    {
+        return $this->response->send();
+    }
 }

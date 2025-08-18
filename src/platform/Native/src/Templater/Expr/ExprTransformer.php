@@ -4,6 +4,8 @@ namespace NativePlatform\Templater\Expr;
 
 class ExprTransformer
 {
+    public static ?\NativePlatform\Templater\SymbolTable $symbols = null;
+
     /**
      * Transforms variable expressions like $foo.bar or $foo->bar.baz
      * into safe PHP code that supports both arrays and objects.
@@ -12,6 +14,20 @@ class ExprTransformer
     {
         $normalized = str_replace('->', '.', ltrim($var, '$'));
         $parts = explode('.', $normalized);
+        $root = $parts[0];
+
+        if (self::$symbols && self::$symbols->isLocal('$' . $root))
+        {
+            if (count($parts) === 1)
+            {
+                return '$' . $root;
+            }
+
+            return '$' . $root . implode('', array_map(
+                fn($p) => "['$p']",
+                array_slice($parts, 1)
+            ));
+        }
 
         return "\$this->contextGetStrict(\$this->context, " . var_export($parts, true) . ")";
     }
@@ -76,18 +92,14 @@ class ExprTransformer
      */
     public static function transformExpr(string $expr): string
     {
-        // If it contains braces, treat as string interpolation
         if (str_contains($expr, '{'))
         {
             return self::transformString($expr);
         }
-        // Replace all simple $vars with context access
+
         return preg_replace_callback(
             '/\$[a-zA-Z_][a-zA-Z0-9_\.]*/',
-            function ($matches)
-            {
-                return self::transformVar($matches[0]);
-            },
+            fn($matches) => self::transformVar($matches[0]),
             $expr
         );
     }

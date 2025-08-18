@@ -269,7 +269,7 @@ class Parser
                     break;
                 }
             }
-            if ($token['type'] === 'endtag' && trim($token['value']) === $this->prefix . Tag::get('if'))
+            if ($token['type'] === 'endtag' && trim($token['value']) === Tag::get('if'))
             {
                 $foundEnd = true;
                 $this->pos++;
@@ -282,7 +282,7 @@ class Parser
         {
             $token = $this->tokens[$this->pos];
 
-            if ($token['type'] === 'tag' && str_starts_with(trim($token['value']), $this->prefix . ":elseif"))
+            if ($token['type'] === 'tag' && str_starts_with(trim($token['value']), ":elseif"))
             {
                 preg_match($this->basePatterns['if']['attr']['is'], $token['value'], $m);
                 $condition = $m[1] ?? '';

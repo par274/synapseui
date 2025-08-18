@@ -26,6 +26,7 @@ class FilterRegistry
         $this->register('capitalize', '\\NativePlatform\\Templater\\Filter\\FormattingFilter::compileCap');
         $this->register('lower', '\\NativePlatform\\Templater\\Filter\\FormattingFilter::compileLower');
         $this->register('ucwords', '\\NativePlatform\\Templater\\Filter\\FormattingFilter::compileUpperFirst');
+        $this->register('escape', '\\NativePlatform\\Templater\\Filter\\FormattingFilter::escape');
         $this->register('raw', '\\NativePlatform\\Templater\\Filter\\RawFilter::compile');
         $this->register('dump', '\\NativePlatform\\Templater\\Filter\\DumpFilter::compile');
         $this->register('sy-dump', '\\NativePlatform\\Templater\\Filter\\DumpFilter::compileAlternative');

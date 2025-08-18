@@ -18,4 +18,9 @@ class FormattingFilter
     {
         return "\$this->echoText(\ucfirst({$expr}));";
     }
+
+    public static function escape(string $expr): string
+    {
+        return "\$this->echoText(\htmlspecialchars({$expr}));";
+    }
 }

@@ -22,11 +22,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;
 
-use FastRoute\Dispatcher;
-use FastRoute\RouteCollector;
-
-use function FastRoute\simpleDispatcher;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -36,7 +31,6 @@ class Bridge
 {
     protected Connection $db;
     protected BridgeConfig $config;
-    protected Dispatcher $router;
     protected EntityManager $em;
     protected Request $request;
     protected Response $response;
@@ -49,7 +43,6 @@ class Bridge
     public function __construct()
     {
         $this->initEnv();
-        $this->initRouter();
         $this->initHttpFoundation();
         $this->initDatabase();
         $this->initTemplater();
@@ -63,7 +56,6 @@ class Bridge
 
         // Basic services
         $this->container->set('app:config', $this->config);
-        $this->container->set('app:router', $this->router);
 
         // Lazy services
         $this->container->set('app:request', fn() => $this->request);
@@ -164,17 +156,6 @@ class Bridge
         $this->config = new BridgeConfig($_ENV);
 
         SecurityConfig::setBridgeConfig($this->config);
-    }
-
-    protected function initRouter(): void
-    {
-        $this->router = simpleDispatcher(function (RouteCollector $r)
-        {
-            foreach ($this->config->getRouteCollection() as $name => $route)
-            {
-                $r->addRoute($route['method'], $route['url'], $route['handler']);
-            }
-        });
     }
 
     protected function initDatabase(): void

@@ -236,17 +236,7 @@ class BridgeConfig
             'password' => $this->get('APP_DB_PASS'),
         ];
     }
-
-    /**
-     * Retrieves the full collection of application routes.
-     *
-     * @return array The list of all registered routes.
-     */
-    public function getRouteCollection(): array
-    {
-        return RouteCollection::all();
-    }
-
+    
     /**
      * Builds a URL path for an asset relative to the configured assets base.
      *

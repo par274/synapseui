@@ -2,10 +2,15 @@
 
 namespace PlatformBridge;
 
+use PlatformBridge\RouteCollection;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use FastRoute\RouteCollector as FastRouteCollector;
 use FastRoute\Dispatcher;
+
+use function FastRoute\simpleDispatcher;
 
 class BridgeFoundation
 {
@@ -16,6 +21,11 @@ class BridgeFoundation
         $this->bridge = new Bridge();
     }
 
+    /**
+     * Runs the application by processing the HTTP request and dispatching to the appropriate route.
+     *
+     * @return void
+     */
     public function run(): void
     {
         /** @var Request $request */
@@ -24,44 +34,56 @@ class BridgeFoundation
         /** @var Response $response */
         $response = $this->bridge->container->get('app:response');
 
-        /** @var Dispatcher $router */
-        $router = $this->bridge->container->get('app:router');
-
         $httpMethod = $request->getMethod();
-        $uri = $request->getPathInfo();
+        $requestUri = $request->getPathInfo();
 
-        $routeInfo = $router->dispatch($httpMethod, $uri);
+        RouteLoader::load(NATIVE_PLATFORM_DIR . '/src/Routes/Collections/');
 
-        $status = $routeInfo[0];
-
-        match ($status)
+        $dispatcher = simpleDispatcher(function (FastRouteCollector $r)
         {
-            Dispatcher::NOT_FOUND => $response->setStatusCode(404)
+            RouteCollection::loadInto($r);
+        });
+
+        $routeInfo = $dispatcher->dispatch($httpMethod, $requestUri);
+
+        match ($routeInfo[0])
+        {
+            Dispatcher::NOT_FOUND => $response
+                ->setStatusCode(404)
                 ->setContent('404 Not Found'),
 
-            Dispatcher::METHOD_NOT_ALLOWED => $response->setStatusCode(405)
+            Dispatcher::METHOD_NOT_ALLOWED => $response
+                ->setStatusCode(405)
                 ->setContent('405 Method Not Allowed'),
 
             Dispatcher::FOUND => (function () use ($routeInfo, $response)
             {
-                [$class, $method] = $routeInfo[1];
+                $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
-                $fqcn = "NativePlatform\\Routes\\Controllers\\$class";
 
-                if (!class_exists($fqcn))
+                if ($handler instanceof \Closure)
+                {
+                    return $handler($vars);
+                }
+
+                [$class, $method] = $handler;
+
+                if (!class_exists($class))
                 {
                     $response->setStatusCode(500)
-                        ->setContent("Controller {$fqcn} not found");
+                        ->setContent("Controller {$class} not found");
                     return;
                 }
 
-                $controller = new $fqcn($this->bridge->container);
+                $controller = new $class($this->bridge->container);
                 $controller->setRouteParams($vars);
-                call_user_func_array([$controller, $method], $vars);
+
+                return $controller->{$method}($vars);
             })(),
 
-            default => $response->setStatusCode(500)
-                ->setContent("Unexpected router status code: {$status}"),
+            default => $response
+                ->setStatusCode(500)
+                ->setContent("Unexpected router status code: {$routeInfo[0]}"),
         };
 
         $response->send();

@@ -2,6 +2,8 @@
 
 namespace NativePlatform\SubContainer;
 
+use NativePlatform\Scopes\Escaper;
+
 class HtmlElement
 {
     protected string $tag;
@@ -28,7 +30,7 @@ class HtmlElement
 
     public function setText(string $text): static
     {
-        $this->text = htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $this->text = Escaper::rawEscaper($text);
         return $this;
     }
 
@@ -58,7 +60,7 @@ class HtmlElement
         foreach ($this->attributes as $key => $value)
         {
             $value = $value ?? '';
-            $html .= " {$key}=\"" . htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "\"";
+            $html .= " {$key}=\"" . Escaper::rawEscaper($value) . "\"";
         }
 
         if ($this->selfClosing && empty($this->children) && $this->text === '')

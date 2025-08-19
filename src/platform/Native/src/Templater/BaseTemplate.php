@@ -2,6 +2,7 @@
 
 namespace NativePlatform\Templater;
 
+use NativePlatform\Scopes\Escaper;
 use NativePlatform\SubContainer\Style\UiInterface;
 
 /**
@@ -43,7 +44,7 @@ abstract class BaseTemplate
 
     protected function echoText(mixed $value): void
     {
-        echo htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        echo Escaper::rawEscaper((string)$value);
     }
 
     protected function echoRaw(mixed $value): void

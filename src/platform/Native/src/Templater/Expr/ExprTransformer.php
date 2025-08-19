@@ -2,9 +2,11 @@
 
 namespace NativePlatform\Templater\Expr;
 
+use NativePlatform\Templater\SymbolTable;
+
 class ExprTransformer
 {
-    public static ?\NativePlatform\Templater\SymbolTable $symbols = null;
+    public static ?SymbolTable $symbols = null;
 
     /**
      * Transforms variable expressions like $foo.bar or $foo->bar.baz

@@ -40,7 +40,7 @@ class ForeachNode implements Node
 
     public function toPhp(): string
     {
-        \NativePlatform\Templater\Expr\ExprTransformer::$symbols = $this->symbols;
+        ExprTransformer::$symbols = $this->symbols;
         
         $tpl = $this->getTemplates();
 

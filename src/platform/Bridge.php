@@ -124,8 +124,7 @@ class Bridge
             };
 
             $manager->register();
-        });
-        $this->container->get('app:exception');
+        })()->bootstrap();
 
         $this->container->set('security:captcha.google', fn() => new GoogleRecaptchaValidator($this->config));
         $this->container->set('security:captcha.cloudflare', fn() => new CloudflareTurnstileValidator($this->config));

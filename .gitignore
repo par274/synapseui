@@ -6,6 +6,7 @@
 logs/*
 
 src/vendor
+src/internal/logs/*
 src/internal/template_cache/*
 
 sshpass

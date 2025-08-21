@@ -25,7 +25,7 @@ class Compiler
         $php  = "<?php\n\n";
         $php .= "namespace Internal\\Templater\\Compiled;\n\n";
         $php .= "use NativePlatform\\Templater\\BaseTemplate;\n\n";
-        $php .= "// Template {$registry->getTemplateName()}\n";
+        $php .= "// Template {$registry->getTemplatePath()}\n";
         $php .= "class {$registry->getClassName()} extends BaseTemplate\n{\n";
         $php .= "    public string \$cache = \"{$registry->getSourceKey()}\";\n\n";
 

@@ -17,11 +17,17 @@ use NativePlatform\Adapters\AdapterManager as LLMAdapterManager;
 use NativePlatform\Adapters\Ollama\Client as OllamaAdapterClient;
 use NativePlatform\Adapters\LLamacpp\Client as LLamacppAdapterClient;
 use NativePlatform\Scopes\RenderScope;
+use NativePlatform\Exception\ExceptionManager;
+use NativePlatform\Exception\Handler\LogHandler;
+use PlatformBridge\Logging;
+use NativePlatform\Exception\Handler\PlainTextHandler;
+use NativePlatform\Exception\Handler\PrettyPageHandler;
+use NativePlatform\Exception\Handler\JsonResponseHandler;
+use NativePlatform\Exception\Handler\ProdExceptionHandler;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -85,6 +91,42 @@ class Bridge
             return $this->templater;
         });
 
+        $this->container->set('scope:renderer', function (ServiceContainer $c)
+        {
+            return new RenderScope(
+                $c->get('app:response')
+            );
+        });
+
+        $this->container->set('app:exception', function (ServiceContainer $c)
+        {
+            $manager = new ExceptionManager(
+                $c->get('app:response'),
+                $c->get('scope:renderer')
+            );
+            $manager->disableGlobalLog();
+
+            // We can use default simple file logging, if you want can use Monolog eg.
+            $logger = new Logging(INTERNAL_DIR . '/logs/errors.log');
+            $logHandler = new LogHandler($logger);
+
+            $manager->pushHandler($logHandler);
+            //$manager->pushHandler(new PlainTextHandler());
+            //$manager->pushHandler(new JsonResponseHandler());
+            $manager->pushHandler(new PrettyPageHandler($c->get('app:templater')));
+            $manager->pushHandler(new ProdExceptionHandler($c->get('app:templater')));
+
+            // If has a multiple handler, you can try forcePushHandler() method. It's not affect on log handler.
+            match ($c->get('app:config')->getEnv())
+            {
+                'dev' => $manager->forcePushHandler(PrettyPageHandler::class),
+                'prod' => $manager->forcePushHandler(ProdExceptionHandler::class)
+            };
+
+            $manager->register();
+        });
+        $this->container->get('app:exception');
+
         $this->container->set('security:captcha.google', fn() => new GoogleRecaptchaValidator($this->config));
         $this->container->set('security:captcha.cloudflare', fn() => new CloudflareTurnstileValidator($this->config));
         $this->container->set('security:captcha', function (ServiceContainer $c)
@@ -104,13 +146,6 @@ class Bridge
                 $c->get('app:response'),
                 $c->get('db:em')->user,
                 $c->get('security:captcha')
-            );
-        });
-
-        $this->container->set('scope:renderer', function (ServiceContainer $c)
-        {
-            return new RenderScope(
-                $c->get('app:response')
             );
         });
 
@@ -179,7 +214,7 @@ class Bridge
     protected function initTemplater(): void
     {
         $this->templater = new TemplateEngine(
-            WEB_PLATFORM_DIR . '/src/Templates',
+            WEB_PLATFORM_DIR . '/src/View',
             INTERNAL_DIR . '/template_cache'
         );
     }

@@ -8,6 +8,7 @@ ARG TIMEZONE
 ARG LLM_MANAGER
 
 COPY ./php.ini /usr/local/etc/php/conf.d/docker-php-config.ini
+COPY ./opcache-jit.ini /usr/local/etc/php/conf.d/opcache-jit.ini
 
 RUN mkdir -p /usr/local/var/log /usr/local/var/log/archive && chown www-data:www-data /usr/local/var/log /usr/local/var/log/archive
 COPY ./docker-php-entrypoint.sh /usr/local/bin/docker-php-entrypoint.sh

@@ -50,9 +50,18 @@ class TemplateRegistry
             {
                 file_put_contents($this->getClassPath(), $compiled);
 
-                if (function_exists('opcache_compile_file'))
+                if (function_exists('opcache_invalidate'))
                 {
                     opcache_invalidate($this->getClassPath(), true);
+                }
+
+                if (function_exists('opcache_compile_file'))
+                {
+                    opcache_compile_file($this->getClassPath());
+                }
+                else
+                {
+                    include_once $this->getClassPath();
                 }
             }
         }

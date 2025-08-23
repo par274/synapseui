@@ -31,7 +31,6 @@ use NativePlatform\Exception\{
     Handler\ProdExceptionHandler
 };
 
-
 use Doctrine\DBAL\{
     Connection,
     DriverManager,

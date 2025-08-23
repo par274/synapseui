@@ -4,13 +4,16 @@ namespace PlatformBridge;
 
 use PlatformBridge\RouteCollection;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\{
+    Request,
+    Response
+};
 
-use FastRoute\RouteCollector as FastRouteCollector;
-use FastRoute\Dispatcher;
-
-use function FastRoute\simpleDispatcher;
+use FastRoute\{
+    RouteCollector as FastRouteCollector,
+    Dispatcher,
+    function simpleDispatcher
+};
 
 class BridgeFoundation
 {

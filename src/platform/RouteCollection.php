@@ -6,6 +6,7 @@ namespace PlatformBridge;
 
 use Closure;
 use InvalidArgumentException;
+
 use FastRoute\RouteCollector;
 
 class RouteCollection

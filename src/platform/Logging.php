@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PlatformBridge;
 
 use Psr\Log\AbstractLogger;
-use Psr\Log\LogLevel;
 
 /**
  * Very small logger that writes to a file.

@@ -3,35 +3,47 @@
 namespace PlatformBridge;
 
 use PlatformBridge\BridgeConfig;
-use NativePlatform\SubContainer\ServiceContainer;
-use NativePlatform\SubContainer\SecurityConfig;
 use NativePlatform\Db\EntityManager;
 use NativePlatform\Templater\Engine as TemplateEngine;
-use NativePlatform\SubContainer\Style\UiManager;
-use NativePlatform\SubContainer\Style\DaisyUI;
-use NativePlatform\SubContainer\Auth\AuthManager;
-use NativePlatform\SubContainer\Security\CaptchaManager;
-use NativePlatform\SubContainer\Security\GoogleRecaptchaValidator;
-use NativePlatform\SubContainer\Security\CloudflareTurnstileValidator;
-use NativePlatform\Adapters\AdapterManager as LLMAdapterManager;
-use NativePlatform\Adapters\Ollama\Client as OllamaAdapterClient;
-use NativePlatform\Adapters\LLamacpp\Client as LLamacppAdapterClient;
+use NativePlatform\SubContainer\{
+    ServiceContainer,
+    SecurityConfig,
+    Style\UiManager,
+    Style\DaisyUI,
+    Auth\AuthManager,
+    Security\CaptchaManager,
+    Security\GoogleRecaptchaValidator,
+    Security\CloudflareTurnstileValidator
+};
+use NativePlatform\Adapters\{
+    AdapterManager as LLMAdapterManager,
+    Ollama\Client as OllamaAdapterClient,
+    LLamacpp\Client as LLamacppAdapterClient
+};
 use NativePlatform\Scopes\RenderScope;
-use NativePlatform\Exception\ExceptionManager;
-use NativePlatform\Exception\Handler\LogHandler;
 use PlatformBridge\Logging;
-use NativePlatform\Exception\Handler\PlainTextHandler;
-use NativePlatform\Exception\Handler\PrettyPageHandler;
-use NativePlatform\Exception\Handler\JsonResponseHandler;
-use NativePlatform\Exception\Handler\ProdExceptionHandler;
+use NativePlatform\Exception\{
+    ExceptionManager,
+    Handler\LogHandler,
+    Handler\PlainTextHandler,
+    Handler\PrettyPageHandler,
+    Handler\JsonResponseHandler,
+    Handler\ProdExceptionHandler
+};
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Exception;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
+
+use Doctrine\DBAL\{
+    Connection,
+    DriverManager,
+    Exception
+};
+
+use Symfony\Component\HttpFoundation\{
+    Request,
+    Response,
+    Session\Session,
+    Session\Storage\NativeSessionStorage
+};
 
 class Bridge
 {

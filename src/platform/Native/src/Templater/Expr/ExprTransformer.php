@@ -38,10 +38,7 @@ class ExprTransformer
     {
         $arg = trim($arg);
 
-        if (is_numeric($arg))
-        {
-            return $arg;
-        }
+        if (is_numeric($arg)) return $arg;
 
         if ((str_starts_with($arg, '"') && str_ends_with($arg, '"')) ||
             (str_starts_with($arg, "'") && str_ends_with($arg, "'"))
@@ -52,7 +49,7 @@ class ExprTransformer
 
         if (str_starts_with($arg, '$'))
         {
-            return ExprTransformer::transformVar($arg);
+            return self::transformVar($arg);
         }
 
         return var_export($arg, true);
@@ -99,10 +96,46 @@ class ExprTransformer
             return self::transformString($expr);
         }
 
+        $expr = preg_replace_callback(
+            '/(!?\s*)(isset|empty|is_null)\((.+?)\)/',
+            function ($m)
+            {
+                $negation = trim($m[1]);
+                $func = strtolower($m[2]);
+                $inner = trim($m[3]);
+
+                $innerTransformed = self::safeVar($inner);
+
+                return match ($func)
+                {
+                    'isset'   => $negation === '!' ? "null === {$innerTransformed}" : "null !== {$innerTransformed}",
+                    'empty'   => $negation === '!' ? $innerTransformed : "!({$innerTransformed})",
+                    'is_null' => $negation === '!' ? "null !== {$innerTransformed}" : "null === {$innerTransformed}",
+                    default   => $m[0],
+                };
+            },
+            $expr
+        );
+
         return preg_replace_callback(
             '/\$[a-zA-Z_][a-zA-Z0-9_\.]*/',
             fn($matches) => self::transformVar($matches[0]),
             $expr
         );
+    }
+
+    protected static function safeVar(string $var): string
+    {
+        $var = trim($var);
+
+        if (str_starts_with($var, '$'))
+        {
+            $parts = explode('.', ltrim($var, '$'));
+            $root = array_shift($parts);
+            $access = implode('', array_map(fn($p) => "['$p']", $parts));
+            return '$' . $root . $access;
+        }
+
+        return $var;
     }
 }

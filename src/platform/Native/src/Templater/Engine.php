@@ -24,6 +24,8 @@ class Engine
     protected array $debugAst = [];
     protected UiInterface $ui;
 
+    protected array $globalContext = [];
+
     public function __construct(string $templateDir, string $cacheDir)
     {
         $this->filters = new FilterRegistry();
@@ -49,6 +51,8 @@ class Engine
 
     protected function render(TemplateRegistry $registry, array $context = []): string
     {
+        $context = array_merge($this->globalContext, $context);
+
         if (!$registry->has())
         {
             $compiledData = $this->compileTemplate($registry);
@@ -65,7 +69,7 @@ class Engine
         else
         {
             $template = $registry->create();
-            $template->setup($registry->getTemplateName(), $registry->getClassPath(), $this->ui, $context);
+            $template->setup($registry->getTemplatePath(), $registry->getClassPath(), $this->ui, $context);
             $registry->setCacheKey($template->getCacheKey());
 
             $compiledData = $this->compileTemplate($registry);
@@ -130,7 +134,7 @@ class Engine
         {
             $this->debugAst = array_map(fn($node) => $node->toArray(), $ast);
         }
-        
+
         return [
             'ast' => $flattener->get(),
             'blocks' => $parser->getBlocks(),
@@ -182,6 +186,19 @@ class Engine
     public function isStrict(): bool
     {
         return $this->strictMode;
+    }
+
+    public function setGlobal(array $globals = []): void
+    {
+        if (!in_array('app', $this->globalContext))
+        {
+            $this->globalContext['app'] = [];
+        }
+
+        foreach ($globals as $key => $value)
+        {
+            $this->globalContext['app'][$key] = $value;
+        }
     }
 
     public function enableDebug(): void

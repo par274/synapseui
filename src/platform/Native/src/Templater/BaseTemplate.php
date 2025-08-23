@@ -26,8 +26,9 @@ abstract class BaseTemplate
         $this->templatePath = $templatePath;
         $this->context = array_merge($context, [
             'this' => [
-                'name' => $templateName,
-                'path' => $templatePath
+                'name' => basename($templateName),
+                'path' => $templateName,
+                'cachePath' => $templatePath
             ]
         ]);
         $this->ui = $ui;

@@ -20,7 +20,10 @@ use NativePlatform\Adapters\{
     Ollama\Client as OllamaAdapterClient,
     LLamacpp\Client as LLamacppAdapterClient
 };
-use NativePlatform\Scopes\RenderScope;
+use NativePlatform\Scopes\{
+    RenderScope,
+    StreamedRenderScope
+};
 use PlatformBridge\Logging;
 use NativePlatform\Exception\{
     ExceptionManager,
@@ -102,11 +105,13 @@ class Bridge
             return $this->templater;
         });
 
-        $this->container->set('scope:renderer', function (ServiceContainer $c)
+        $this->container->set(['scope:renderer', 'scope:streamed_renderer'], function (ServiceContainer $c, string $id)
         {
-            return new RenderScope(
-                $c->get('app:response')
-            );
+            return match ($id)
+            {
+                'scope:renderer' => new RenderScope($c->get('app:response')),
+                'scope:streamed_renderer' => new StreamedRenderScope($c->get('app:response')),
+            };
         });
 
         $this->container->set('app:exception', function (ServiceContainer $c)

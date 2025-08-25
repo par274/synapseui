@@ -52,7 +52,7 @@ use Psr\Http\Message\ResponseInterface;
  * $client->generate([
  *     'model' => 'ollama-model',
  *     'prompt' => 'Tell a joke about AI.'
- * ], true, function(string $token) {
+ * ], true, function(array $token) {
  *     echo $token;
  * });
  */

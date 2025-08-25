@@ -18,17 +18,12 @@ final class TokenStreamReader
     private ResponseInterface $response;
     private $streamResource;
     private string $buffer = '';
+    private $stop = false; // <-- yeni: durdurma flag
 
-    /** 
-     * @var callable(string): void
-     */
+    /** @var callable(array): void */
     private $callback;
 
-    /**
-     * @param ResponseInterface $response
-     * @param callable(string): void $callback
-     */
-    public function __construct(ResponseInterface $response, $callback)
+    public function __construct(ResponseInterface $response, callable $callback)
     {
         $this->response = $response;
         $this->callback = $callback;
@@ -38,10 +33,9 @@ final class TokenStreamReader
 
     public function start(): void
     {
-        while (!$this->isEof())
+        while (!$this->isEof() && !$this->stop)
         {
             $chunk = fread($this->streamResource, 1024);
-
             if ($chunk === false || $chunk === '')
             {
                 usleep(50000);
@@ -60,9 +54,13 @@ final class TokenStreamReader
                     try
                     {
                         $json = json_decode($trimmed, true, 512, JSON_THROW_ON_ERROR);
-                        if (isset($json['token']))
+
+                        ($this->callback)($json);
+
+                        if (($json['finish_reason'] ?? null) === 'stop')
                         {
-                            ($this->callback)($json['token']);
+                            $this->stop = true;
+                            break;
                         }
                     }
                     catch (\JsonException)

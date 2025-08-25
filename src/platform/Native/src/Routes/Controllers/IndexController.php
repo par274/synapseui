@@ -9,6 +9,7 @@ use NativePlatform\Templater\Engine as TemplateEngine;
 use NativePlatform\Routes\Controller;
 use NativePlatform\SubContainer\Style\UiInterface;
 use NativePlatform\Scopes\RenderScope;
+use NativePlatform\Scopes\StreamedRenderScope;
 
 use NativePlatform\Adapters\Ollama\ClientInterface as OllamaClientInterface;
 use NativePlatform\Adapters\LLamacpp\ClientInterface as LLamacppClientInterface;
@@ -71,12 +72,13 @@ class IndexController extends Controller
         /** @var Request $request */
         $request = $this->container->get('app:request');
 
+        /** @var StreamedRenderScope $streamedRenderer */
+        $streamedRenderer = $this->container->get('scope:streamed_renderer');
+
         /** @var LLamacppClientInterface|OllamaClientInterface $llmAdapter */
         $llmAdapter = $this->container->get('app:llm.adapter_manager')->get();
 
-        $response = new StreamedResponse();
-        $response->headers->set('X-Accel-Buffering', 'no');
-        $response->setCallback(function () use ($llmAdapter, $request, $response): void
+        $streamedRenderer->set(function () use ($llmAdapter, $request): void
         {
             $llmAdapter->chat([
                 'model' => 'gemma3:1b',
@@ -94,20 +96,9 @@ class IndexController extends Controller
                 ];
 
                 echo "data: " . json_encode($fullData, JSON_UNESCAPED_UNICODE) . "\n\n";
-                if (ob_get_level()) ob_flush();
-                flush();
             });
-
-            echo "data: END-OF-STREAM\n\n"; // Give browser a signal to stop re-opening connection
-            ob_get_flush();
-            flush();
-            sleep(1);
         });
-        $response->headers->set('Content-Type', 'text/event-stream');
-        $response->headers->set('Cache-Control', 'no-cache');
-        $response->headers->set('Connection', 'keep-alive');
-        $response->headers->set('X-Accel-Buffering', 'no');
 
-        $response->send();
+        $streamedRenderer->sendBuffer();
     }
 }

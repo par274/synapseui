@@ -31,7 +31,8 @@
         "doctrine/dbal": "^4.2",
         "symfony/http-foundation": "^7.2",
         "guzzlehttp/guzzle": "^7.9",
-        "lcobucci/jwt": "^5.5"
+        "lcobucci/jwt": "^5.5",
+        "league/commonmark": "^2.7"
     },
     "require-dev": {
         "symfony/var-dumper": "^7",

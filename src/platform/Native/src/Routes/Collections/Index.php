@@ -31,8 +31,15 @@ return function ()
 {
     RouteCollection::register(
         'app.index',
-        ['GET'],
+        ['GET', 'POST'],
         '/',
         [IndexController::class, 'index']
+    );
+
+    RouteCollection::register(
+        'app.stream',
+        ['GET'],
+        '/chat',
+        [IndexController::class, 'stream']
     );
 };

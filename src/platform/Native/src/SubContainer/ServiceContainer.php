@@ -38,32 +38,58 @@ class ServiceContainer
      * $service->bootstrap();
      * ```
      *
-     * @param string $key
+     * @param string|array $key
      * @param object|array $service
      * @return Closure(): ServiceInterface Lazy factory closure
      */
-    public function set(string $key, object|array $service): Closure
+    public function set(string|array $keys, object|array $service): Closure|array
     {
-        $this->definitions[$key] = $service;
+        $keys = (array) $keys;
 
-        /** @var callable $getFn */
-        $getFn = fn() => $this->get($key);
-        return function () use ($getFn)
+        $factories = [];
+
+        foreach ($keys as $key)
         {
-            return new class($getFn) {
-                private $getFn;
-
-                public function __construct(callable $getFn)
+            if (is_array($service))
+            {
+                // [ClassName::class, ...args]
+                $this->definitions[$key] = function (ServiceContainer $c) use ($service, $key)
                 {
-                    $this->getFn = $getFn;
-                }
-
-                public function bootstrap(): void
+                    $class = array_shift($service);
+                    return new $class(...$service);
+                };
+            }
+            elseif ($service instanceof Closure)
+            {
+                $this->definitions[$key] = function (ServiceContainer $c) use ($service, $key)
                 {
-                    ($this->getFn)();
-                }
+                    return $service($c, $key);
+                };
+            }
+            else
+            {
+                $this->definitions[$key] = $service;
+            }
+
+            /** @var callable $getFn */
+            $getFn = fn() => $this->get($key);
+            $factories[$key] = function () use ($getFn)
+            {
+                return new class($getFn) implements ServiceInterface {
+                    private $getFn;
+                    public function __construct(callable $getFn)
+                    {
+                        $this->getFn = $getFn;
+                    }
+                    public function bootstrap(): void
+                    {
+                        ($this->getFn)();
+                    }
+                };
             };
-        };
+        }
+
+        return count($factories) === 1 ? reset($factories) : $factories;
     }
 
     /**

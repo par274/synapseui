@@ -1,0 +1,9 @@
+{
+    "dependencies": {
+        "markdown-it": "npm:@esm-bundle/markdown-it@13.0.1"
+    },
+    "devDependencies": {
+        "@rollup/plugin-replace": "^6.0.2",
+        "rollup": "^4.48.1"
+    }
+}

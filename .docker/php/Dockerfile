@@ -19,6 +19,10 @@ RUN if [ "${SERVER}" = "apache" ] ; then \
         a2enmod rewrite; \
     fi
 
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npm@latest
+
 RUN apt-get update && apt-get install -y \
     sshpass \
     nano \
@@ -38,7 +42,10 @@ RUN apt-get update && apt-get install -y \
     libxslt1-dev \
 	libpq-dev \
     acl \
-    && echo 'alias sf="php bin/console"' >> ~/.bashrc
+    && echo 'alias sf="php bin/console"' >> ~/.bashrc \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npm@latest
 
 RUN docker-php-ext-configure gd --with-jpeg --with-freetype 
 	

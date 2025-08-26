@@ -79,6 +79,8 @@ window.ChatBehavior = function () {
             liveDiv.textContent = "";
             liveDiv.style.display = "block";
 
+            document.querySelector(".typing-dots").classList.remove('hidden');
+
             if (eventSourceRef.current) eventSourceRef.current.close();
 
             let buffer = "";
@@ -86,6 +88,8 @@ window.ChatBehavior = function () {
             let running = false;
 
             const appendTokenWithAnimation = (token) => {
+                document.querySelector(".typing-dots").classList.add('hidden');
+
                 for (const ch of token) {
                     const span = document.createElement("span");
                     span.textContent = ch === " " ? "\u00A0" : ch;

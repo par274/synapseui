@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-theme="business">
+<html class="dark-side">
 
 <head>
     <title>Synapse Template Demo</title>
@@ -12,18 +12,14 @@
 
     <link href="{$app.config->asset('appcss/style.css')}?v=1" rel="stylesheet" type="text/css" />
 
-    <sx:foreach loop="$app.ui->getStyles()" key="$i" value="$item">
-        <link href="{$item}" rel="stylesheet" type="text/css" />
-    </sx:foreach>
+    <link rel="stylesheet" href="{$app.config->asset('vendor/metroui/metroui.css')}" />
 </head>
 
-<body class="bg-base-100 text-base-content h-screen">
+<body class="d-flex flex-align-center flex-justify-center">
     <sx:block name="appContainer">
 
     </sx:block>
-    <sx:foreach loop="$app.ui->getScripts()" key="$i" value="$item">
-        <script src="{$item}" type="text/javascript"></script>
-    </sx:foreach>
+    <script src="{$app.config->asset('vendor/metroui/metroui.js')}"></script>
 
     <script src="{$app.config->asset('vendor/react/react.production.min.js')}" type="text/javascript"></script>
     <script src="{$app.config->asset('vendor/react/react-dom.production.min.js')}" type="text/javascript"></script>

@@ -24,7 +24,10 @@
     <sx:foreach loop="$app.ui->getScripts()" key="$i" value="$item">
         <script src="{$item}" type="text/javascript"></script>
     </sx:foreach>
-    <script src="{$app.config->asset('vendor/eventsource.min.js')}" type="text/javascript"></script>
+
+    <script src="{$app.config->asset('vendor/react/react.production.min.js')}" type="text/javascript"></script>
+    <script src="{$app.config->asset('vendor/react/react-dom.production.min.js')}" type="text/javascript"></script>
+
     <script src="{$app.config->asset('appjs/app.js')}" type="text/javascript"></script>
 </body>
 

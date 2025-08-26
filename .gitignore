@@ -9,4 +9,6 @@ src/vendor
 src/internal/logs/*
 src/internal/template_cache/*
 
+node_modules
+
 sshpass

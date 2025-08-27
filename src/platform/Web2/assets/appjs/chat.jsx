@@ -1,51 +1,6 @@
-/**
- * ChatBehavior Component
- * ----------------------
- * Implements a live chat interface with token-by-token streaming and Markdown rendering.
- *
- * Features:
- * 1. Markdown Rendering:
- *    - Uses MarkdownIt to parse user messages or AI responses.
- *    - Applies TailwindCSS classes for styled lists, code blocks, and inline code.
- *
- * 2. Token Streaming Animation:
- *    - Each token is appended to `liveDiv` as a <span> with the class "token".
- *    - Creates a typewriter-style animation effect.
- *    - Spaces are preserved with &nbsp; for proper display.
- *
- * 3. Buffer Management:
- *    - Tokens are accumulated in a `buffer` for Markdown rendering.
- *    - `flushBuffer(force)` renders buffer into `chatOutput` as styled HTML.
- *    - Code blocks are respected: buffer waits for proper closing before rendering.
- *
- * 4. EventSource Integration:
- *    - Listens to server-sent events from `/chat?message=...`.
- *    - Handles each incoming token JSON payload and pushes it to the token queue.
- *    - Detects end of stream ("END-OF-STREAM") and finalizes rendering.
- *
- * 5. Error Handling & Fallbacks:
- *    - On SSE errors, any remaining buffer is flushed.
- *    - A periodic check (1s) ensures leftover buffer is rendered if no new tokens arrive.
- *
- * 6. React Integration:
- *    - Implemented as a React component, but does not render any visible UI itself.
- *    - Mounts into `liveDiv` to manage live token animation and output rendering.
- *
- * Usage:
- * - Ensure the following elements exist in HTML:
- *     - <input id="userMessage" /> for user input
- *     - <button id="sendBtn" /> for sending messages
- *     - <div id="chatOutput"></div> for rendered Markdown output
- *     - <div id="liveDiv"></div> for live token animation
- *
- * Note:
- * - The component relies on TailwindCSS classes defined in `addTailwindClasses`.
- * - Tokens are processed every 25ms to produce smooth animation.
- */
+import MarkdownIt from "/assets/vendor/markdown-it/index.js";
 
-import MarkdownIt from "../vendor/markdown-it/index.js";
-
-const { useEffect, useRef } = React;
+const { useState, useEffect, useRef } = React;
 
 const md = new MarkdownIt({
     html: true,
@@ -53,131 +8,155 @@ const md = new MarkdownIt({
     typographer: true,
 });
 
-function addTailwindClasses(html) {
+function addStyleClasses(html) {
     return html
         .replace(/<ul>/g, '<ul class="list-disc pl-5 space-y-1">')
         .replace(/<li>/g, '<li class="ml-2">')
-        .replace(/<pre>/g, '<pre class="bg-base-300 text-white p-4 rounded overflow-x-auto">')
-        .replace(/<code>/g, '<code class="font-mono text-sm bg-base-300 px-1 rounded">');
+        .replace(
+            /<pre>/g,
+            '<pre class="bg-base-300 text-white p-4 rounded overflow-x-auto">'
+        )
+        .replace(
+            /<code>/g,
+            '<code class="font-mono text-sm bg-base-300 px-1 rounded">'
+        );
 }
 
-window.ChatBehavior = function () {
+export default function Chat() {
+    const [userMessage, setUserMessage] = useState("what is that mean in coding hello world!");
+    const [renderedOutput, setRenderedOutput] = useState("");
+    const [typing, setTyping] = useState(false);
+
     const eventSourceRef = useRef(null);
-    const endCheckTimer = useRef(null);
+    const bufferRef = useRef("");
+    const tokenQueueRef = useRef([]);
+    const runningRef = useRef(false);
+    const endCheckTimerRef = useRef(null);
+    const liveDivRef = useRef(null);
 
-    useEffect(() => {
-        const input = document.getElementById("userMessage");
-        const btn = document.getElementById("sendBtn");
-        const output = document.getElementById("chatOutput");
-        const liveDiv = document.getElementById("liveDiv");
+    const flushBuffer = (force = false) => {
+        const buffer = bufferRef.current;
+        const backticks = (buffer.match(/```/g) || []).length;
+        const codeBlockOpen = backticks % 2 !== 0;
 
-        const handleSend = () => {
-            const msg = input.value.trim();
-            if (!msg) return;
+        if (!force && codeBlockOpen) return;
 
-            output.innerHTML = "";
-            liveDiv.textContent = "";
-            liveDiv.style.display = "block";
+        if (buffer.trim()) {
+            const rendered = addStyleClasses(md.render(buffer));
+            setRenderedOutput((prev) => prev + rendered);
+            bufferRef.current = "";
+        }
 
-            document.querySelector(".typing-dots").classList.remove('hidden');
+        if (liveDivRef.current) {
+            liveDivRef.current.textContent = "";
+        }
+    };
 
-            if (eventSourceRef.current) eventSourceRef.current.close();
+    const processQueue = () => {
+        if (tokenQueueRef.current.length === 0) {
+            runningRef.current = false;
+            return;
+        }
 
-            let buffer = "";
-            const tokenQueue = [];
-            let running = false;
+        runningRef.current = true;
+        const token = tokenQueueRef.current.shift();
+        bufferRef.current += token;
 
-            const appendTokenWithAnimation = (token) => {
-                document.querySelector(".typing-dots").classList.add('hidden');
+        if (liveDivRef.current) {
+            for (const ch of token) {
+                const span = document.createElement("span");
+                span.textContent = ch === " " ? "\u00A0" : ch;
+                span.className = "token";
+                liveDivRef.current.appendChild(span);
+            }
+        }
 
-                for (const ch of token) {
-                    const span = document.createElement("span");
-                    span.textContent = ch === " " ? "\u00A0" : ch;
-                    span.className = "token";
-                    liveDiv.appendChild(span);
-                }
-            };
+        if (/\n\n$/.test(bufferRef.current) || /```$/.test(bufferRef.current)) {
+            flushBuffer();
+        }
 
-            const flushBuffer = (force = false) => {
-                const backticks = (buffer.match(/```/g) || []).length;
-                const codeBlockOpen = backticks % 2 !== 0;
+        setTimeout(processQueue, 25);
+    };
 
-                if (!force && codeBlockOpen) return;
+    const handleSend = () => {
+        const msg = userMessage.trim();
+        if (!msg) return;
 
-                if (buffer.trim()) {
-                    const rendered = addTailwindClasses(md.render(buffer));
-                    output.innerHTML += rendered;
-                    buffer = "";
-                }
+        setRenderedOutput("");
+        setTyping(true);
 
-                liveDiv.textContent = "";
-            };
+        if (liveDivRef.current) liveDivRef.current.textContent = "";
 
-            const processQueue = () => {
-                if (!tokenQueue.length) { running = false; return; }
+        if (eventSourceRef.current) eventSourceRef.current.close();
 
-                running = true;
-                const token = tokenQueue.shift();
-                buffer += token;
+        bufferRef.current = "";
+        tokenQueueRef.current = [];
+        runningRef.current = false;
 
-                appendTokenWithAnimation(token);
+        const es = new EventSource(`/chat?message=${encodeURIComponent(msg)}`);
+        eventSourceRef.current = es;
 
-                if (/\n\n$/.test(buffer) || /```$/.test(buffer)) {
-                    flushBuffer();
-                }
+        es.onmessage = (event) => {
+            setTyping(false);
 
-                setTimeout(processQueue, 25);
-            };
-
-            eventSourceRef.current = new EventSource(`/chat?message=${encodeURIComponent(msg)}`);
-
-            eventSourceRef.current.onmessage = (event) => {
-                if (event.data === "END-OF-STREAM") {
-                    flushBuffer(true);
-                    eventSourceRef.current.close();
-                    return;
-                }
-
-                try {
-                    const payload = JSON.parse(event.data);
-                    let token =
-                        payload.token?.message?.content ?? payload.token;
-
-                    if (typeof token !== "string")
-                        token = JSON.stringify(token);
-
-                    tokenQueue.push(token);
-                    if (!running) processQueue();
-                } catch (err) {
-                    console.error("JSON parse error", err, event.data);
-                }
-            };
-
-            eventSourceRef.current.onerror = () => {
+            if (event.data === "END-OF-STREAM") {
                 flushBuffer(true);
-            };
+                es.close();
+                setTyping(false);
+                return;
+            }
 
-            clearInterval(endCheckTimer.current);
-            endCheckTimer.current = setInterval(() => {
-                if (!running && tokenQueue.length === 0 && buffer.trim()) {
-                    flushBuffer(true);
-                }
-            }, 1000);
+            try {
+                const payload = JSON.parse(event.data);
+                let token = payload.token?.message?.content ?? payload.token;
+                if (typeof token !== "string") token = JSON.stringify(token);
 
+                tokenQueueRef.current.push(token);
+                if (!runningRef.current) processQueue();
+            } catch (e) {
+                console.error("JSON parse error", e, event.data);
+            }
         };
 
-        btn.addEventListener("click", handleSend);
+        es.onerror = () => {
+            flushBuffer(true);
+            setTyping(false);
+        };
 
+        clearInterval(endCheckTimerRef.current);
+        endCheckTimerRef.current = setInterval(() => {
+            if (!runningRef.current && tokenQueueRef.current.length === 0 && bufferRef.current.trim()) {
+                flushBuffer(true);
+            }
+        }, 1000);
+    };
+
+    useEffect(() => {
         return () => {
-            btn.removeEventListener("click", handleSend);
             if (eventSourceRef.current) eventSourceRef.current.close();
-            clearInterval(endCheckTimer.current);
+            clearInterval(endCheckTimerRef.current);
         };
     }, []);
 
-    return null;
-};
+    return (
+        <div>
+            <div className="form-group flex-row">
+                <input className="mr-1" type="text" value={userMessage} onChange={(e) => setUserMessage(e.target.value)} />
+                <button className="button info" onClick={handleSend}>Send</button>
+            </div>
+            <div class="mt-5">
+                <div className={`typing-dots ${typing ? "" : "hidden"}`}>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
 
-ReactDOM.createRoot(document.getElementById('liveDiv')).render(
-    React.createElement(window.ChatBehavior)
-);
+                <div dangerouslySetInnerHTML={{ __html: renderedOutput }}></div>
+
+                <div className="text-gray-300 whitespace-pre-wrap break-words" ref={liveDivRef}></div>
+            </div>
+        </div>
+    );
+}
+
+ReactDOM.createRoot(document.querySelector(".chat-root")).render(<Chat />);

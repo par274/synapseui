@@ -19,8 +19,19 @@
     <sx:block name="appContainer">
 
     </sx:block>
+    <script>
+        const origWarn = console.warn;
+        console.warn = function (...args) {
+            if (typeof args[0] === "string" && args[0].includes("in-browser Babel transformer")) {
+                return;
+            }
+            origWarn.apply(console, args);
+        };
+    </script>
+
     <script src="{$app.config->asset('vendor/metroui/metroui.js')}"></script>
 
+    <script src="{$app.config->asset('vendor/babel/babel.min.js')}" type="text/javascript"></script>
     <script src="{$app.config->asset('vendor/react/react.production.min.js')}" type="text/javascript"></script>
     <script src="{$app.config->asset('vendor/react/react-dom.production.min.js')}" type="text/javascript"></script>
 

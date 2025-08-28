@@ -1,9 +1,19 @@
 {
     "dependencies": {
-        "markdown-it": "npm:@esm-bundle/markdown-it@13.0.1"
+        "@olton/metroui": "^5.1.17",
+        "markdown-it": "npm:@esm-bundle/markdown-it@13.0.1",
+        "react-toastify": "^11.0.5"
     },
     "devDependencies": {
+        "@babel/core": "^7.28.3",
+        "@babel/preset-react": "^7.27.1",
+        "@rollup/plugin-babel": "^6.0.4",
+        "@rollup/plugin-commonjs": "^28.0.6",
+        "@rollup/plugin-node-resolve": "^16.0.1",
         "@rollup/plugin-replace": "^6.0.2",
-        "rollup": "^4.48.1"
+        "postcss": "^8.5.6",
+        "postcss-import": "^16.1.1",
+        "rollup": "^4.49.0",
+        "rollup-plugin-postcss": "^4.0.2"
     }
 }

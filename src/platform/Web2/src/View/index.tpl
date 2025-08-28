@@ -7,5 +7,4 @@
             <div class="chat-root"></div>
         </div>
     </div>
-    <script src="{$app.config->asset('appjs/chat.jsx')}" type="text/babel" data-type="module"></script>
 </sx:block>

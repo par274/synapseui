@@ -1,0 +1,65 @@
+@import url('font.css');
+
+@import "react-toastify/dist/ReactToastify.css";
+@import "@olton/metroui/lib/metro.all.css";
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+#chatOutput p {
+    margin-top: 0.5rem;
+}
+
+.typing-dots {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.typing-dots.hidden {
+    display: none;
+}
+
+.typing-dots span {
+    width: 4px;
+    height: 4px;
+    background: currentColor;
+    border-radius: 50%;
+    opacity: 0.2;
+    animation: blink 1.5s infinite;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+@keyframes blink {
+
+    0%,
+    80%,
+    100% {
+        opacity: 0.2;
+        transform: translateY(0);
+    }
+
+    40% {
+        opacity: 1;
+        transform: translateY(-2px);
+    }
+}
+
+.token {
+    display: inline;
+    opacity: 0;
+    animation: typewriter 0.5s forwards;
+}
+
+@keyframes typewriter {
+    to {
+        opacity: 1;
+    }
+}

@@ -4,6 +4,7 @@ import babel from '@rollup/plugin-babel';
 import replace from '@rollup/plugin-replace';
 import postcss from 'rollup-plugin-postcss';
 import postcssImport from 'postcss-import';
+import terser from '@rollup/plugin-terser';
 
 export default [
     {
@@ -24,6 +25,11 @@ export default [
             replace({
                 'process.env.NODE_ENV': JSON.stringify('production'),
                 preventAssignment: true
+            }),
+            terser({
+                format: {
+                    comments: false
+                }
             })
         ],
         external: ['@olton/metroui']

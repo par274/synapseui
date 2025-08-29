@@ -15,15 +15,6 @@
     <sx:block name="appContainer">
 
     </sx:block>
-    <script>
-        const origWarn = console.warn;
-        console.warn = function (...args) {
-            if (typeof args[0] === "string" && args[0].includes("in-browser Babel transformer")) {
-                return;
-            }
-            origWarn.apply(console, args);
-        };
-    </script>
 
     <script type="module" src="{$app.config->asset('app.bundle.js')}"></script>
 </body>

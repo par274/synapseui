@@ -2,27 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 
 import MarkdownIt from "markdown-it";
 
-const md = new MarkdownIt({
-    html: true,
-    linkify: true,
-    typographer: true,
-});
-
-function addStyleClasses(html) {
-    return html
-        .replace(/<ul>/g, '<ul class="list-disc pl-5 space-y-1">')
-        .replace(/<li>/g, '<li class="ml-2">')
-        .replace(
-            /<pre>/g,
-            '<pre class="bg-base-300 text-white p-4 rounded overflow-x-auto">'
-        )
-        .replace(
-            /<code>/g,
-            '<code class="font-mono text-sm bg-base-300 px-1 rounded">'
-        );
-}
-
-export default function Chat() {
+export default function AppChat() {
     const [userMessage, setUserMessage] = useState("what is that mean in coding hello world!");
     const [renderedOutput, setRenderedOutput] = useState("");
     const [typing, setTyping] = useState(false);
@@ -33,6 +13,26 @@ export default function Chat() {
     const runningRef = useRef(false);
     const endCheckTimerRef = useRef(null);
     const liveDivRef = useRef(null);
+
+    const md = new MarkdownIt({
+        html: true,
+        linkify: true,
+        typographer: true,
+    });
+
+    function addStyleClasses(html) {
+        return html
+            .replace(/<ul>/g, '<ul class="list-disc pl-5 space-y-1">')
+            .replace(/<li>/g, '<li class="ml-2">')
+            .replace(
+                /<pre>/g,
+                '<pre class="bg-base-300 text-white p-4 rounded overflow-x-auto">'
+            )
+            .replace(
+                /<code>/g,
+                '<code class="font-mono text-sm bg-base-300 px-1 rounded">'
+            );
+    }
 
     const flushBuffer = (force = false) => {
         const buffer = bufferRef.current;

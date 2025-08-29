@@ -63,3 +63,41 @@ body {
         opacity: 1;
     }
 }
+
+.skeleton-effect {
+    background: #2b2d30;
+    height: 20px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    animation: pulse 1.5s infinite;
+}
+
+.skeleton-effect.lv1 {
+    width: 70%;
+}
+
+.skeleton-effect.lv2 {
+    width: 55%;
+}
+
+.skeleton-effect.lv3 {
+    width: 80%;
+}
+
+.skeleton-effect.lv2 {
+    width: 45%;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

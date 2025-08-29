@@ -8,11 +8,12 @@ import terser from '@rollup/plugin-terser';
 
 export default [
     {
-        input: 'src/assets/chat.jsx',
+        input: 'src/assets/app.jsx',
         output: {
             file: 'src/platform/Web2/assets/app.bundle.js',
             format: 'esm',
-            sourcemap: true
+            sourcemap: true,
+            inlineDynamicImports: true
         },
         plugins: [
             resolve({ extensions: ['.js', '.jsx', '.mjs'] }),

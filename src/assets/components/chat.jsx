@@ -1,11 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import ReactDOM from "react-dom/client";
-
-import { ToastContainer, toast } from "react-toastify";
 
 import MarkdownIt from "markdown-it";
-
-import "@olton/metroui/lib/metro.all.js";
 
 const md = new MarkdownIt({
     html: true,
@@ -163,5 +158,3 @@ export default function Chat() {
         </div>
     );
 }
-
-ReactDOM.createRoot(document.querySelector(".chat-root")).render(<Chat />);

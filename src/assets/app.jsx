@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 
-import "@olton/metroui/lib/metro.all.js";
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const AppChat = lazy(() => import("./components/chat.jsx"));
 const AppInit = (function () {

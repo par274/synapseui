@@ -1,10 +1,18 @@
-@import url('font.css');
+@import 'bootstrap/dist/css/bootstrap.min.css';
 
-@import "react-toastify/dist/ReactToastify.css";
-@import "@olton/metroui/lib/metro.all.css";
+:root {
+    --bs-body-bg: #212121;
+    --bs-border-color: #555;
+}
+
+*:focus {
+    box-shadow: none !important;
+}
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-feature-settings: normal;
+    font-family: ui-sans-serif, -apple-system, system-ui, Segoe UI, Helvetica, Apple Color Emoji, Arial, sans-serif, Segoe UI Emoji, Segoe UI Symbol;
+    font-variation-settings: normal;
 }
 
 #chatOutput p {
@@ -65,7 +73,7 @@ body {
 }
 
 .skeleton-effect {
-    background: #2b2d30;
+    background: #2e2e2e;
     height: 20px;
     margin-bottom: 10px;
     border-radius: 4px;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark-side">
+<html data-bs-theme="dark">
 
 <head>
     <title>Synapse Template Demo</title>
@@ -17,6 +17,14 @@
     </sx:block>
 
     <script type="module" src="{$app.config->asset('app.bundle.js')}"></script>
+
+    <script>
+        window.app = {
+            config: {
+                test: "{$app.config->asset('app.bundle.js')}"
+            }
+        };
+    </script>
 </body>
 
 </html>

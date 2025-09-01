@@ -21,17 +21,7 @@ export default function AppChat() {
     });
 
     function addStyleClasses(html) {
-        return html
-            .replace(/<ul>/g, '<ul class="list-disc pl-5 space-y-1">')
-            .replace(/<li>/g, '<li class="ml-2">')
-            .replace(
-                /<pre>/g,
-                '<pre class="bg-base-300 text-white p-4 rounded overflow-x-auto">'
-            )
-            .replace(
-                /<code>/g,
-                '<code class="font-mono text-sm bg-base-300 px-1 rounded">'
-            );
+        return html;
     }
 
     const flushBuffer = (force = false) => {
@@ -140,11 +130,11 @@ export default function AppChat() {
 
     return (
         <div>
-            <div className="form-group flex-row">
-                <input className="mr-1" type="text" value={userMessage} onChange={(e) => setUserMessage(e.target.value)} />
-                <button className="button info" onClick={handleSend}>Send</button>
+            <div className="input-group">
+                <input className="form-control" type="text" value={userMessage} onChange={(e) => setUserMessage(e.target.value)} />
+                <button className="btn btn-outline-secondary" onClick={handleSend}>Send</button>
             </div>
-            <div class="mt-5">
+            <div class="mt-3">
                 <div className={`typing-dots ${typing ? "" : "hidden"}`}>
                     <span></span>
                     <span></span>
@@ -153,7 +143,7 @@ export default function AppChat() {
 
                 <div dangerouslySetInnerHTML={{ __html: renderedOutput }}></div>
 
-                <div className="text-gray-300 whitespace-pre-wrap break-words" ref={liveDivRef}></div>
+                <div className="text-break" ref={liveDivRef}></div>
             </div>
         </div>
     );

@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "@olton/metroui": "^5.1.17",
+        "bootstrap": "^5.3.8",
         "markdown-it": "npm:@esm-bundle/markdown-it@13.0.1",
         "react-toastify": "^11.0.5"
     },
@@ -14,7 +14,10 @@
         "@rollup/plugin-terser": "^0.4.4",
         "postcss": "^8.5.6",
         "postcss-import": "^16.1.1",
-        "rollup": "^4.49.0",
+        "rollup": "^4.50.0",
         "rollup-plugin-postcss": "^4.0.2"
+    },
+    "scripts": {
+        "build": "rollup -c"
     }
 }

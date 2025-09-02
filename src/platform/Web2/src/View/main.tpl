@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{$app.config->asset('app.bundle.css')}" />
 </head>
 
-<body class="d-flex flex-align-center flex-justify-center">
+<body>
     <sx:block name="appContainer">
 
     </sx:block>

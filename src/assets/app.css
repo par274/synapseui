@@ -1,8 +1,10 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.min.css';
 
 :root {
     --bs-body-bg: #212121;
     --bs-border-color: #555;
+    --bs-dark-border-subtle: #2f2f2f;
 }
 
 *:focus {
@@ -13,6 +15,70 @@ body {
     font-feature-settings: normal;
     font-family: ui-sans-serif, -apple-system, system-ui, Segoe UI, Helvetica, Apple Color Emoji, Arial, sans-serif, Segoe UI Emoji, Segoe UI Symbol;
     font-variation-settings: normal;
+    font-size: .90rem;
+}
+
+.fs-lg {
+    font-size: 1.125rem;
+}
+
+.fs-normal {
+    font-size: 1rem;
+}
+
+.h-35 {
+    height: 35%;
+}
+
+.h-45 {
+    height: 45%;
+}
+
+.h-60 {
+    height: 60%;
+}
+
+.w-35 {
+    width: 35%;
+}
+
+.w-45 {
+    width: 45%;
+}
+
+.w-60 {
+    width: 60%;
+}
+
+i.bi {
+    margin-right: .5rem;
+}
+
+.position-relative a:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.side {
+    background-color: #181818;
+    width: 280px;
+}
+
+.side .side-head {
+    height: 35px;
+}
+
+.side .side-link {
+    border-radius: 10px;
+    height: 35px;
+}
+
+.side .side-link:hover, .side .side-link.active {
+    background-color: #232323;
 }
 
 #chatOutput p {

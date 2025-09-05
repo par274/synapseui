@@ -121,7 +121,6 @@ class VariableNode implements Node
         return "\$this->echoText({$expr});\n";
     }
 
-
     public function toArray(): array
     {
         return [

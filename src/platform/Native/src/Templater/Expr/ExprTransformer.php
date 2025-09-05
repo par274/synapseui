@@ -52,6 +52,11 @@ class ExprTransformer
             return self::transformVar($arg);
         }
 
+        if ($arg === '[]' || str_starts_with($arg, '['))
+        {
+            return $arg;
+        }
+
         return var_export($arg, true);
     }
 

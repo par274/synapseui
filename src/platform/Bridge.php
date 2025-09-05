@@ -46,6 +46,10 @@ use Symfony\Component\HttpFoundation\{
     Session\Session,
     Session\Storage\NativeSessionStorage
 };
+use Symfony\Component\Translation\{
+    Translator,
+    Loader\PhpFileLoader as SymfonyTranslation_PhpFileLoader
+};
 
 class Bridge
 {
@@ -141,6 +145,22 @@ class Bridge
 
             $manager->register();
         })()->bootstrap();
+
+        $this->container->set('app:translations', function (ServiceContainer $c)
+        {
+            $translator = new Translator(
+                $c->get('app:request')->getPreferredLanguage(['tr', 'en', 'de'])
+            );
+            $translator->setFallbackLocales(['en']);
+
+            $translator->addLoader('php', new SymfonyTranslation_PhpFileLoader());
+
+            $translator->addResource('php', NATIVE_PLATFORM_DIR . '/translations/meta+intl-icu.en.php', 'en', '_meta');
+            $translator->addResource('php', NATIVE_PLATFORM_DIR . '/translations/sidebar+intl-icu.en.php', 'en', 'sidebar');
+            $translator->addResource('php', NATIVE_PLATFORM_DIR . '/translations/chat+intl-icu.en.php', 'en', 'chat');
+
+            return $translator;
+        });
 
         $this->container->set('security:captcha.google', fn() => new GoogleRecaptchaValidator($this->config));
         $this->container->set('security:captcha.cloudflare', fn() => new CloudflareTurnstileValidator($this->config));

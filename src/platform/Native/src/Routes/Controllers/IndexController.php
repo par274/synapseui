@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Translation\Translator;
 
 class IndexController extends Controller
 {
@@ -49,12 +50,16 @@ class IndexController extends Controller
         /** @var RenderScope */
         $renderer = $this->container->get('scope:renderer');
 
+        /** @var Translator $translator */
+        $translator = $this->container->get('app:translations');
+
         if ($request->server->get('REQUEST_METHOD') === 'GET')
         {
             $template = $templater->renderFromFile('index.tpl', [
                 'app' => [
                     'config' => $config,
-                    'ui' => $ui
+                    'translator' => $translator,
+                    'jsTranslatorPhraseList' => json_encode($this->getJsTranslationList($translator))
                 ]
             ]);
 

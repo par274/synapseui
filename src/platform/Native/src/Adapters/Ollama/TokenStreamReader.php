@@ -15,6 +15,8 @@ use JsonException;
  */
 final class TokenStreamReader
 {
+    private string $decoder = 'ollama';
+    
     private ResponseInterface $response;
     private $streamResource;
     private string $buffer = '';
@@ -54,12 +56,13 @@ final class TokenStreamReader
                     try
                     {
                         $json = json_decode($trimmed, true, 512, JSON_THROW_ON_ERROR);
-                        $jsonData = "data: " . json_encode($json, JSON_UNESCAPED_UNICODE) . "\n\n";
+                        $jsonData = "event: {$this->decoder}\ndata: " . json_encode($json, JSON_UNESCAPED_UNICODE) . "\n\n";
 
                         ($this->callback)($jsonData);
 
                         if (($json['done_reason'] ?? null) === 'stop')
                         {
+                            ($this->callback)("event: {$this->decoder}\ndata: END-OF-STREAM\n\n");
                             $this->stop = true;
                             break;
                         }

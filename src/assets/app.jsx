@@ -1,9 +1,13 @@
+import { TranslationsProvider } from "./translationsContext.jsx";
+
 import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import "bootstrap";
 
-const AppChat = lazy(() => import("./components/chat.jsx"));
+const TabComponent = lazy(() => import("./components/tab.jsx"));
+const ChatComponent = lazy(() => import("./components/chat.jsx"));
+const SidebarComponent = lazy(() => import("./components/sidebar.jsx"));
 const AppInit = (function () {
     const roots = new Map();
 
@@ -19,7 +23,7 @@ const AppInit = (function () {
         );
     }
 
-    function mountIfExists(selector, Component) {
+    function mountIfExists(selector, Component, { withSkeleton = false } = {}) {
         const el = document.querySelector(selector);
         if (!el) return;
 
@@ -29,17 +33,33 @@ const AppInit = (function () {
             roots.set(selector, root);
         }
 
-        root.render(
-            <Suspense fallback={<LoadingSkeleton />}>
-                <Component />
-            </Suspense>
+        const content = (
+            <TranslationsProvider>
+                {withSkeleton ? (
+                    <Suspense fallback={<LoadingSkeleton />}>
+                        <Component />
+                    </Suspense>
+                ) : (
+                    <Component />
+                )}
+            </TranslationsProvider>
         );
+
+        root.render(content);
     }
 
     return {
+        mountTabComponent: function (TabComponent) {
+            mountIfExists('[js-ref="tab"] .js-ref', TabComponent);
+        },
         mountChat: function (ChatComponent) {
-            mountIfExists(".chat-root", ChatComponent);
+            mountIfExists('.chat-root', ChatComponent, { withSkeleton: true });
+        },
+        mountSidebarComponent: function (SidebarComponent) {
+            mountIfExists('[js-ref="side-toggle"] .js-ref', SidebarComponent);
         }
     };
 })();
-AppInit.mountChat(AppChat);
+AppInit.mountTabComponent(TabComponent);
+AppInit.mountChat(ChatComponent);
+AppInit.mountSidebarComponent(SidebarComponent);

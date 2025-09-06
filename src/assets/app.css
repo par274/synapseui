@@ -230,7 +230,7 @@ body:has(.side.collapsed) .new-chat>.head>div {
 .token {
     display: inline;
     opacity: 0;
-    animation: typewriter 0.5s forwards;
+    animation: typewriter .3s forwards;
 }
 
 @keyframes typewriter {

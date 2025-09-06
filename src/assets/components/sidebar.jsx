@@ -13,7 +13,7 @@ export default function SidebarComponent() {
             tooltipList = [];
 
             if (sidebar.classList.contains('collapsed')) {
-                const tooltipTriggerList = sidebar.querySelectorAll('[js-tooltip="true"]');
+                const tooltipTriggerList = sidebar.querySelectorAll('[js-tooltip="rule"]');
                 tooltipList = [...tooltipTriggerList].map(el => new Tooltip(el, {
                     animation: false,
                     placement: 'right',

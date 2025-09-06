@@ -4,6 +4,16 @@ import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 
 import "bootstrap";
+import { Tooltip } from "bootstrap";
+
+const tooltipTriggerList = document.querySelectorAll('[js-tooltip="true"]');
+const tooltipList = [...tooltipTriggerList].map(el => new Tooltip(el, {
+    animation: false,
+    title: () => {
+        const label = el.querySelector('.label');
+        return label ? label.textContent.trim() : '';
+    }
+}));
 
 const TabComponent = lazy(() => import("./components/tab.jsx"));
 const ChatComponent = lazy(() => import("./components/chat.jsx"));

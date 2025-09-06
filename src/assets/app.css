@@ -54,6 +54,15 @@ i.bi+.label {
     margin-left: .5rem;
 }
 
+a.link-highlighted {
+    padding: .25rem .50rem;
+    border-radius: 10px;
+}
+
+a.link-highlighted:hover {
+    background-color: #ffffff1a;
+}
+
 .position-relative a:after {
     content: "";
     position: absolute;
@@ -94,8 +103,8 @@ i.bi+.label {
     width: 280px;
 }
 
-.side.ready {
-    transition: flex-basis 0.1s ease;
+.side.ready>div {
+    transition: flex-basis, width 0.1s ease;
 }
 
 .side.collapsed {
@@ -129,8 +138,52 @@ i.bi+.label {
     background-color: #ffffff1a;
 }
 
-.new-chat>div:first-child {
+.new-chat>.head {
     min-height: 35%;
+    flex: 0 0 280px;
+    flex-shrink: 0;
+}
+
+.new-chat>.head>div {
+    left: 280px;
+    top: 0;
+    right: 0;
+}
+
+body:has(.side.ready) .new-chat>.head>div {
+    transition: left 0.1s ease;
+}
+
+body:has(.side.collapsed) .new-chat>.head>div {
+    left: 50px;
+}
+
+.dropdown-menu {
+    --bs-dropdown-min-width: 17rem;
+    --bs-dropdown-padding-x: .35rem;
+    --bs-dropdown-padding-y: .4rem;
+    --bs-dropdown-bg: #303030;
+    --bs-dropdown-border-color: hsla(0, 0%, 65.9%, 0.15);
+    --bs-dropdown-border-radius: 20px;
+    box-shadow: var(--bs-box-shadow);
+    --bs-dropdown-font-size: .9rem;
+}
+
+.dropdown-menu a.link-highlighted {
+    border-radius: 10px;
+    padding: .45rem .75rem;
+}
+
+.dropdown>a::after,
+.dropdown>button::after {
+    content: "\F282";
+    font-family: bootstrap-icons !important;
+    font-style: normal;
+    font-weight: 400 !important;
+    font-variant: normal;
+    font-size: 11px;
+    display: inline-block;
+    margin-left: .255em;
 }
 
 .typing-dots {

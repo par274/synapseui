@@ -133,10 +133,6 @@ i.bi+.label {
     min-height: 35%;
 }
 
-#chatOutput p {
-    margin-top: 0.5rem;
-}
-
 .typing-dots {
     display: inline-flex;
     gap: 2px;

@@ -90,27 +90,35 @@ export default function ChatComponent() {
         const es = new EventSource(`/chat?message=${encodeURIComponent(msg)}`);
         eventSourceRef.current = es;
 
-        es.onmessage = (event) => {
-            setTyping(false);
-
-            if (event.data === "END-OF-STREAM") {
-                flushBuffer(true);
-                es.close();
-                setTyping(false);
-                return;
-            }
-
-            try {
-                const payload = JSON.parse(event.data);
-                let token = payload.message?.content ?? payload.token;
-                if (typeof token !== "string") token = JSON.stringify(token);
-
-                tokenQueueRef.current.push(token);
-                if (!runningRef.current) processQueue();
-            } catch (e) {
-                console.error("JSON parse error", e, event.data);
-            }
+        const decoders = {
+            ollama: (payload) => payload.message?.content ?? payload.token,
+            llamacpp: (payload) => payload.choices?.[0]?.delta?.content ?? "",
         };
+
+        Object.keys(decoders).forEach((adapter) => {
+            es.addEventListener(adapter, (event) => {
+                setTyping(false);
+
+                if (event.data === "END-OF-STREAM") {
+                    flushBuffer(true);
+                    es.close();
+                    setTyping(false);
+                    return;
+                }
+
+                try {
+                    const payload = JSON.parse(event.data);
+                    console.log(payload);
+                    let token = decoders[adapter](payload);
+                    if (typeof token !== "string") token = JSON.stringify(token);
+
+                    tokenQueueRef.current.push(token);
+                    if (!runningRef.current) processQueue();
+                } catch (e) {
+                    console.error(`[${adapter}] JSON parse error`, e, event.data);
+                }
+            });
+        });
 
         es.onerror = () => {
             flushBuffer(true);

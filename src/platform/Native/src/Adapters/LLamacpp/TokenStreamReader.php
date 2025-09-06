@@ -18,13 +18,10 @@ final class TokenStreamReader
     private ResponseInterface $response;
     private $streamResource;
     private string $buffer = '';
+    private $stop = false;
 
-    /** 
-     * @var callable(string): void
-     */
+    /** @var callable(array): void */
     private $callback;
-
-    private string $accumulatedContent = '';
 
     public function __construct(ResponseInterface $response, callable $callback)
     {
@@ -36,7 +33,7 @@ final class TokenStreamReader
 
     public function start(): void
     {
-        while (!$this->isEof())
+        while (!$this->isEof() && !$this->stop)
         {
             $chunk = fread($this->streamResource, 1024);
             if ($chunk === false || $chunk === '')
@@ -62,32 +59,22 @@ final class TokenStreamReader
 
                 try
                 {
-                    $decoded = json_decode($line, true, 512, JSON_THROW_ON_ERROR);
+                    $json = json_decode($line, true, 512, JSON_THROW_ON_ERROR);
 
-                    $choice = $decoded['choices'][0] ?? null;
-                    if (!$choice) continue;
+                    $jsonData = "event: llamacpp\ndata: " . json_encode($json, JSON_UNESCAPED_UNICODE) . "\n\n";
+                    ($this->callback)($jsonData);
 
-                    if (isset($choice['delta']['role']))
+                    if (($json['choices'][0]['finish_reason'] ?? null) === 'stop')
                     {
-                        $role = $choice['delta']['role'];
-                        continue;
-                    }
-
-                    $deltaContent = $choice['delta']['content'] ?? null;
-                    if ($deltaContent !== null)
-                    {
-                        $this->accumulatedContent .= $deltaContent;
-                        ($this->callback)($deltaContent);
-                    }
-
-                    if (($choice['finish_reason'] ?? null) === 'stop')
-                    {
-                        return;
+                        ($this->callback)("event: llamacpp\ndata: END-OF-STREAM\n\n");
+                        $this->stop = true;
+                        break;
                     }
                 }
                 catch (JsonException)
                 {
-                    // ignore invalid lines
+                    $this->buffer = $line . "\n" . $this->buffer;
+                    break;
                 }
             }
         }

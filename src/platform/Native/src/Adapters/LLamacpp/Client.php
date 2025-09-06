@@ -268,6 +268,7 @@ final class Client extends AdapterClient implements ClientInterface
 
         if ($stream && $onToken !== null)
         {
+            $options['json']['stream'] = true;
             $options['stream'] = true;
             $resp = $this->request('POST', '/v1/completions', $options);
 
@@ -279,6 +280,7 @@ final class Client extends AdapterClient implements ClientInterface
 
         if ($stream)
         {
+            $options['json']['stream'] = true;
             $options['stream'] = true;
             $resp = $this->request('POST', '/v1/completions', $options);
             
@@ -311,6 +313,7 @@ final class Client extends AdapterClient implements ClientInterface
         if ($stream && $onToken !== null)
         {
             $options['json']['stream'] = true;
+            $options['stream'] = true;
             $resp = $this->request('POST', '/v1/chat/completions', $options);
 
             $tokenReader = new TokenStreamReader($resp, $onToken);
@@ -322,6 +325,7 @@ final class Client extends AdapterClient implements ClientInterface
         if ($stream)
         {
             $options['json']['stream'] = true;
+            $options['stream'] = true;
             $resp = $this->request('POST', '/v1/chat/completions', $options);
             return new StreamIterator($resp);
         }

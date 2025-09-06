@@ -20,9 +20,7 @@
 
     <script>
         window.app = {
-            config: {
-                test: "{$app.config->asset('app.bundle.js')}"
-            }
+            js_translations: '{$app.jsTranslatorPhraseList|raw}'
         };
     </script>
 </body>

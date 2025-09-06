@@ -50,8 +50,8 @@ body {
     width: 60%;
 }
 
-i.bi {
-    margin-right: .5rem;
+i.bi+.label {
+    margin-left: .5rem;
 }
 
 .position-relative a:after {
@@ -63,9 +63,56 @@ i.bi {
     left: 0;
 }
 
+.tooltip {
+    --bs-tooltip-bg: #101010;
+    --bs-tooltip-color: #fff;
+    --bs-tooltip-opacity: 1;
+    --bs-tooltip-arrow-width: 0rem;
+    --bs-tooltip-arrow-height: 0rem;
+    font-size: .75rem;
+    font-weight: 600;
+}
+
 .side {
+    height: 100vh;
+    transition: none;
+}
+
+.side>div {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
     background-color: #181818;
+}
+
+.side.expanded {
+    flex: 0 0 280px;
+}
+
+.side.expanded>div {
     width: 280px;
+}
+
+.side.ready {
+    transition: flex-basis 0.1s ease;
+}
+
+.side.collapsed {
+    flex-basis: 50px;
+}
+
+.side.collapsed>div {
+    background-color: transparent;
+    width: 50px;
+}
+
+.side.collapsed .label {
+    display: none;
+}
+
+.side.collapsed .side-link {
+    justify-content: center;
 }
 
 .side .side-head {
@@ -77,8 +124,13 @@ i.bi {
     height: 35px;
 }
 
-.side .side-link:hover, .side .side-link.active {
-    background-color: #232323;
+.side .side-link:hover,
+.side .side-link.active {
+    background-color: #ffffff1a;
+}
+
+.new-chat>div:first-child {
+    min-height: 35%;
 }
 
 #chatOutput p {
@@ -139,7 +191,7 @@ i.bi {
 }
 
 .skeleton-effect {
-    background: #2e2e2e;
+    background: #484848;
     height: 20px;
     margin-bottom: 10px;
     border-radius: 4px;

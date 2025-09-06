@@ -1,9 +1,13 @@
+import { useTranslations } from "../translationsContext.jsx";
+
 import React, { useState, useRef, useEffect } from "react";
 
 import MarkdownIt from "markdown-it";
 
-export default function AppChat() {
-    const [userMessage, setUserMessage] = useState("what is that mean in coding hello world!");
+export default function ChatComponent() {
+    const t = useTranslations();
+
+    const [userMessage, setUserMessage] = useState(t["chat.input.text"]);
     const [renderedOutput, setRenderedOutput] = useState("");
     const [typing, setTyping] = useState(false);
 

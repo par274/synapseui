@@ -29,7 +29,6 @@ class StreamedRenderScope
                 $this->flushBuffer();
             });
 
-            echo "data: END-OF-STREAM\n\n";
             $this->flushBuffer();
         });
 

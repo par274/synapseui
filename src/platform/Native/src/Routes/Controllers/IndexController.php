@@ -91,16 +91,9 @@ class IndexController extends Controller
                     ['role' => 'system', 'content' => 'Answer in turkish'],
                     ['role' => 'user', 'content' => $request->query->get('message', 'hi')]
                 ]
-            ], true, function (array $token)
+            ], true, function (string $token)
             {
-                $fullData = [
-                    'token' => $token,
-                    'message' => $token['message'] ?? null,
-                    'role' => $token['role'] ?? null,
-                    'finish_reason' => $token['finish_reason'] ?? null,
-                ];
-
-                echo "data: " . json_encode($fullData, JSON_UNESCAPED_UNICODE) . "\n\n";
+                echo $token;
             });
         });
 

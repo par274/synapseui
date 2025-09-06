@@ -102,7 +102,7 @@ export default function ChatComponent() {
 
             try {
                 const payload = JSON.parse(event.data);
-                let token = payload.token?.message?.content ?? payload.token;
+                let token = payload.message?.content ?? payload.token;
                 if (typeof token !== "string") token = JSON.stringify(token);
 
                 tokenQueueRef.current.push(token);

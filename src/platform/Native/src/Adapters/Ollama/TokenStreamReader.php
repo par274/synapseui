@@ -54,10 +54,11 @@ final class TokenStreamReader
                     try
                     {
                         $json = json_decode($trimmed, true, 512, JSON_THROW_ON_ERROR);
+                        $jsonData = "data: " . json_encode($json, JSON_UNESCAPED_UNICODE) . "\n\n";
 
-                        ($this->callback)($json);
+                        ($this->callback)($jsonData);
 
-                        if (($json['finish_reason'] ?? null) === 'stop')
+                        if (($json['done_reason'] ?? null) === 'stop')
                         {
                             $this->stop = true;
                             break;

@@ -18,7 +18,7 @@ final class TokenStreamReader
     private ResponseInterface $response;
     private $streamResource;
     private string $buffer = '';
-    private $stop = false; // <-- yeni: durdurma flag
+    private $stop = false;
 
     /** @var callable(array): void */
     private $callback;

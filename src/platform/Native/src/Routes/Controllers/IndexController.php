@@ -2,22 +2,26 @@
 
 namespace NativePlatform\Routes\Controllers;
 
-use NativePlatform\SubContainer\Auth\AuthManager;
 use PlatformBridge\BridgeConfig;
+use NativePlatform\Routes\Controller;
 use NativePlatform\Db\EntityManager;
 use NativePlatform\Templater\Engine as TemplateEngine;
-use NativePlatform\Routes\Controller;
+use NativePlatform\SubContainer\Auth\AuthManager;
 use NativePlatform\SubContainer\Style\UiInterface;
-use NativePlatform\Scopes\RenderScope;
-use NativePlatform\Scopes\StreamedRenderScope;
+use NativePlatform\Scopes\{
+    RenderScope,
+    StreamedRenderScope
+};
+use NativePlatform\Adapters\{
+    AdapterManager,
+    Ollama\ClientInterface as OllamaClientInterface,
+    LLamacpp\ClientInterface as LLamacppClientInterface
+};
 
-use NativePlatform\Adapters\AdapterManager;
-use NativePlatform\Adapters\Ollama\ClientInterface as OllamaClientInterface;
-use NativePlatform\Adapters\LLamacpp\ClientInterface as LLamacppClientInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\{
+    Request,
+    Response
+};
 use Symfony\Component\Translation\Translator;
 
 class IndexController extends Controller
@@ -54,7 +58,7 @@ class IndexController extends Controller
         /** @var Translator $translator */
         $translator = $this->container->get('app:translations');
 
-        if ($request->server->get('REQUEST_METHOD') === 'GET')
+        if ($request->isMethod('GET'))
         {
             $template = $templater->renderFromFile('index.tpl', [
                 'app' => [
@@ -66,55 +70,69 @@ class IndexController extends Controller
 
             return $renderer->finalRender('html', $template);
         }
-        else if ($request->server->get('REQUEST_METHOD') === 'POST')
+        else if ($request->isMethod('POST'))
         {
         }
-
-        return new JsonResponse(['error' => 'Route not found'], 404);
     }
 
     public function stream()
     {
         /** @var BridgeConfig $config */
         $config = $this->container->get('app:config');
-        
+
         /** @var Request $request */
         $request = $this->container->get('app:request');
 
-        /** @var StreamedRenderScope $streamedRenderer */
-        $streamedRenderer = $this->container->get('scope:streamed_renderer');
-
-        /** @var LLamacppClientInterface|OllamaClientInterface $llmAdapter */
-        $llmAdapter = (function () use ($config)
+        if ($request->isMethod('POST'))
         {
-            /** @var AdapterManager $manager */
-            $manager = $this->container->get('app:llm.adapter_manager');
+            /** @var RenderScope */
+            $renderer = $this->container->get('scope:renderer');
 
-            /** @var LLamacppClientInterface|OllamaClientInterface $adapter */
-            $adapter = $manager->get();
+            $data = json_decode($request->getContent(), true);
 
-            if ($manager->is('llamacpp') && $config->getEnv() === 'dev')
-            {
-                $adapter->useCpu();
-            }
+            return $renderer->finalRender('json', [
+                'chat_id' => $data['chat_id'],
+                'message' => $data['message']
+            ]);
+        }
 
-            return $adapter;
-        })();
-
-        $streamedRenderer->set(function () use ($llmAdapter, $request): void
+        if ($request->isMethod('GET') && $request->query->has('stream'))
         {
-            $llmAdapter->chat([
-                'model' => 'gemma3:1b', # for llama-swap
-                'messages' => [
-                    ['role' => 'system', 'content' => 'Answer in turkish'],
-                    ['role' => 'user', 'content' => $request->query->get('message', 'hi')]
-                ]
-            ], true, function (string $token)
+            /** @var StreamedRenderScope $streamedRenderer */
+            $streamedRenderer = $this->container->get('scope:streamed_renderer');
+
+            /** @var LLamacppClientInterface|OllamaClientInterface $llmAdapter */
+            $llmAdapter = (function () use ($config)
             {
-                echo $token;
+                /** @var AdapterManager $manager */
+                $manager = $this->container->get('app:llm.adapter_manager');
+
+                /** @var LLamacppClientInterface|OllamaClientInterface $adapter */
+                $adapter = $manager->get();
+
+                if ($manager->is('llamacpp') && $config->getEnv() === 'dev')
+                {
+                    $adapter->useCpu();
+                }
+
+                return $adapter;
+            })();
+
+            $streamedRenderer->set(function () use ($llmAdapter, $request): void
+            {
+                $llmAdapter->chat([
+                    'model' => 'gemma3:1b', # for llama-swap
+                    'messages' => [
+                        ['role' => 'system', 'content' => 'Answer in turkish'],
+                        ['role' => 'user', 'content' => $request->query->get('message', 'hi')]
+                    ]
+                ], true, function (string $token)
+                {
+                    echo $token;
+                });
             });
-        });
 
-        $streamedRenderer->sendBuffer();
+            $streamedRenderer->sendBuffer();
+        }
     }
 }

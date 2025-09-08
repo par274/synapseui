@@ -47,6 +47,16 @@ class AdapterManager
         $this->active = $name;
     }
 
+    public function is(string $name): bool
+    {
+        if ($this->active === $name)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public function setAdapter(string $key, callable $factory): void
     {
         $this->adapters[$key] = $factory;

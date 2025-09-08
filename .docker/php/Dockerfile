@@ -60,10 +60,4 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} >
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY ./bin/ollama.sh /usr/local/bin/ollama
-RUN chmod +x /usr/local/bin/ollama
-
-COPY ./bin/llamacpp.sh /usr/local/bin/llamacpp
-RUN chmod +x /usr/local/bin/llamacpp
-
 WORKDIR /workspace

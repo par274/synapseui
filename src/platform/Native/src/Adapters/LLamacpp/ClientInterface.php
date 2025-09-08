@@ -90,4 +90,11 @@ interface ClientInterface
      * @return StreamIterator|TokenStreamReader|ChatCompletionResponse|null
      */
     public function chat(array $payload, bool $stream = false, ?callable $onToken = null): StreamIterator|TokenStreamReader|ChatCompletionResponse|null;
+
+    /**
+     * Use CPU instead of NVIDIA GPU.
+     *
+     * @return void
+     */
+    public function useCpu();
 }

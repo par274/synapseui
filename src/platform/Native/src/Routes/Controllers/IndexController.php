@@ -11,6 +11,7 @@ use NativePlatform\SubContainer\Style\UiInterface;
 use NativePlatform\Scopes\RenderScope;
 use NativePlatform\Scopes\StreamedRenderScope;
 
+use NativePlatform\Adapters\AdapterManager;
 use NativePlatform\Adapters\Ollama\ClientInterface as OllamaClientInterface;
 use NativePlatform\Adapters\LLamacpp\ClientInterface as LLamacppClientInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -74,6 +75,9 @@ class IndexController extends Controller
 
     public function stream()
     {
+        /** @var BridgeConfig $config */
+        $config = $this->container->get('app:config');
+        
         /** @var Request $request */
         $request = $this->container->get('app:request');
 
@@ -81,12 +85,26 @@ class IndexController extends Controller
         $streamedRenderer = $this->container->get('scope:streamed_renderer');
 
         /** @var LLamacppClientInterface|OllamaClientInterface $llmAdapter */
-        $llmAdapter = $this->container->get('app:llm.adapter_manager')->get();
+        $llmAdapter = (function () use ($config)
+        {
+            /** @var AdapterManager $manager */
+            $manager = $this->container->get('app:llm.adapter_manager');
+
+            /** @var LLamacppClientInterface|OllamaClientInterface $adapter */
+            $adapter = $manager->get();
+
+            if ($manager->is('llamacpp') && $config->getEnv() === 'dev')
+            {
+                $adapter->useCpu();
+            }
+
+            return $adapter;
+        })();
 
         $streamedRenderer->set(function () use ($llmAdapter, $request): void
         {
             $llmAdapter->chat([
-                'model' => 'gemma3:1b',
+                'model' => 'gemma3_1b', # for llama-swap
                 'messages' => [
                     ['role' => 'system', 'content' => 'Answer in turkish'],
                     ['role' => 'user', 'content' => $request->query->get('message', 'hi')]

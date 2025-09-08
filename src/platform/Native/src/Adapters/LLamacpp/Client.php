@@ -157,6 +157,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 final class Client extends AdapterClient implements ClientInterface
 {
+    protected string $utilization = 'cuda';
+    
     /**
      * Internal helper that wraps the raw Guzzle request and handles exceptions.
      *
@@ -264,6 +266,7 @@ final class Client extends AdapterClient implements ClientInterface
      */
     public function completion(array $payload, bool $stream = false, ?callable $onToken = null): StreamIterator|TokenStreamReader|CompletionResponse|null
     {
+        $payload['model'] = "{$payload['model']}_{$this->utilization}";
         $options = ['json' => $payload];
 
         if ($stream && $onToken !== null)
@@ -308,6 +311,7 @@ final class Client extends AdapterClient implements ClientInterface
      */
     public function chat(array $payload, bool $stream = false, ?callable $onToken = null): StreamIterator|TokenStreamReader|ChatCompletionResponse|null
     {
+        $payload['model'] = "{$payload['model']}_{$this->utilization}";
         $options = ['json' => $payload];
 
         if ($stream && $onToken !== null)
@@ -333,5 +337,15 @@ final class Client extends AdapterClient implements ClientInterface
         $resp = $this->request('POST', '/v1/chat/completions', $options);
         
         return new ChatCompletionResponse($resp, false);
+    }
+    
+    /**
+     * Use CPU instead of NVIDIA GPU.
+     *
+     * @return void
+     */
+    public function useCpu()
+    {
+        $this->utilization = 'cpu';
     }
 }

@@ -104,7 +104,7 @@ class IndexController extends Controller
         $streamedRenderer->set(function () use ($llmAdapter, $request): void
         {
             $llmAdapter->chat([
-                'model' => 'gemma3_1b', # for llama-swap
+                'model' => 'gemma3:1b', # for llama-swap
                 'messages' => [
                     ['role' => 'system', 'content' => 'Answer in turkish'],
                     ['role' => 'user', 'content' => $request->query->get('message', 'hi')]

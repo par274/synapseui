@@ -266,6 +266,11 @@ final class Client extends AdapterClient implements ClientInterface
      */
     public function completion(array $payload, bool $stream = false, ?callable $onToken = null): StreamIterator|TokenStreamReader|CompletionResponse|null
     {
+        if (strpos($payload['model'], ':'))
+        {
+            $payload['model'] = str_replace(':', '_', $payload['model']);
+        }
+
         $payload['model'] = "{$payload['model']}_{$this->utilization}";
         $options = ['json' => $payload];
 
@@ -311,6 +316,11 @@ final class Client extends AdapterClient implements ClientInterface
      */
     public function chat(array $payload, bool $stream = false, ?callable $onToken = null): StreamIterator|TokenStreamReader|ChatCompletionResponse|null
     {
+        if (str_contains($payload['model'], ':'))
+        {
+            $payload['model'] = str_replace(':', '_', $payload['model']);
+        }
+
         $payload['model'] = "{$payload['model']}_{$this->utilization}";
         $options = ['json' => $payload];
 

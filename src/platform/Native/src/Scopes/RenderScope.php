@@ -19,10 +19,10 @@ class RenderScope
      * Renders the provided content with an appropriate Content‑Type header.
      *
      * @param string $type
-     * @param string $content The body to send back.
+     * @param array|string $content The body to send back.
      * @return void
      */
-    public function finalRender(string $type, string $content): void
+    public function finalRender(string $type, array|string $content): void
     {
         $contentType = [
             'type' => 'Content-Type',
@@ -35,6 +35,12 @@ class RenderScope
                 default => throw new InvalidArgumentException("Unsupported render type: {$type}")
             }
         ];
+
+        if (str_starts_with($contentType['mime'], 'application/json'))
+        {
+            $content = json_encode($content);
+        }
+
         $this->response->headers->set($contentType['type'], $contentType['mime']);
         $this->response->setContent($content);
 

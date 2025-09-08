@@ -72,7 +72,7 @@ export default function ChatComponent() {
         setTimeout(processQueue, 25);
     };
 
-    const handleSend = () => {
+    const handleSend = async () => {
         const msg = userMessage.trim();
         if (!msg) return;
 
@@ -87,43 +87,64 @@ export default function ChatComponent() {
         tokenQueueRef.current = [];
         runningRef.current = false;
 
-        const es = new EventSource(`/chat?message=${encodeURIComponent(msg)}`);
-        eventSourceRef.current = es;
-
-        const decoders = {
-            ollama: (payload) => payload.message?.content ?? payload.token,
-            llamacpp: (payload) => payload.choices?.[0]?.delta?.content ?? "",
-        };
-
-        Object.keys(decoders).forEach((adapter) => {
-            es.addEventListener(adapter, (event) => {
-                setTyping(false);
-
-                if (event.data === "END-OF-STREAM") {
-                    flushBuffer(true);
-                    es.close();
-                    setTyping(false);
-                    return;
-                }
-
-                try {
-                    const payload = JSON.parse(event.data);
-                    console.log(payload);
-                    let token = decoders[adapter](payload);
-                    if (typeof token !== "string") token = JSON.stringify(token);
-
-                    tokenQueueRef.current.push(token);
-                    if (!runningRef.current) processQueue();
-                } catch (e) {
-                    console.error(`[${adapter}] JSON parse error`, e, event.data);
-                }
+        try {
+            const res = await fetch('/chat', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: 123, // for testing
+                    message: msg,
+                }),
             });
-        });
 
-        es.onerror = () => {
-            flushBuffer(true);
+            if (!res.ok) {
+                throw new Error("Error for send messages.");
+            }
+
+            const { message } = await res.json();
+
+            const es = new EventSource(`/chat?stream&message=${message}`);
+            eventSourceRef.current = es;
+
+            const decoders = {
+                ollama: (payload) => payload.message?.content ?? payload.token,
+                llamacpp: (payload) => payload.choices?.[0]?.delta?.content ?? "",
+            };
+
+            Object.keys(decoders).forEach((adapter) => {
+                es.addEventListener(adapter, (event) => {
+                    setTyping(false);
+
+                    if (event.data === "END-OF-STREAM") {
+                        flushBuffer(true);
+                        es.close();
+                        setTyping(false);
+                        return;
+                    }
+
+                    try {
+                        const payload = JSON.parse(event.data);
+                        console.log(payload);
+                        let token = decoders[adapter](payload);
+                        if (typeof token !== "string") token = JSON.stringify(token);
+
+                        tokenQueueRef.current.push(token);
+                        if (!runningRef.current) processQueue();
+                    } catch (e) {
+                        console.error(`[${adapter}] JSON parse error`, e, event.data);
+                    }
+                });
+            });
+
+            es.onerror = () => {
+                flushBuffer(true);
+                setTyping(false);
+            };
+        } catch (err) {
+            console.error("POST error:", err);
             setTyping(false);
-        };
+            return;
+        }
 
         clearInterval(endCheckTimerRef.current);
         endCheckTimerRef.current = setInterval(() => {

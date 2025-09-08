@@ -31,14 +31,14 @@ return function ()
 {
     RouteCollection::register(
         'app.index',
-        ['GET', 'POST'],
+        ['GET'],
         '/',
         [IndexController::class, 'index']
     );
 
     RouteCollection::register(
         'app.stream',
-        ['GET'],
+        ['GET', 'POST'],
         '/chat',
         [IndexController::class, 'stream']
     );

@@ -8,6 +8,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1" />
 
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
     <link rel="stylesheet" href="{$app.config->asset('app.bundle.css')}" />
 </head>
 

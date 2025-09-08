@@ -5,6 +5,10 @@
     --bs-body-bg: #212121;
     --bs-border-color: #555;
     --bs-dark-border-subtle: #2f2f2f;
+
+    --sy-border-default: #ffffff0d;
+    --sy-border-light: #ffffff26;
+    --sy-bg-color-adaptive: #ffffff1a;
 }
 
 *:focus {
@@ -60,7 +64,7 @@ a.link-highlighted {
 }
 
 a.link-highlighted:hover {
-    background-color: #ffffff1a;
+    background-color: var(--sy-bg-color-adaptive);
 }
 
 .position-relative a:after {
@@ -93,6 +97,7 @@ a.link-highlighted:hover {
     left: 0;
     height: 100vh;
     background-color: #181818;
+    border-right: 1px solid var(--sy-border-default);
 }
 
 .side.expanded {
@@ -135,7 +140,7 @@ a.link-highlighted:hover {
 
 .side .side-link:hover,
 .side .side-link.active {
-    background-color: #ffffff1a;
+    background-color: var(--sy-bg-color-adaptive);
 }
 
 .new-chat>.head {
@@ -165,13 +170,22 @@ body:has(.side.collapsed) .new-chat>.head>div {
     --bs-dropdown-bg: #303030;
     --bs-dropdown-border-color: hsla(0, 0%, 65.9%, 0.15);
     --bs-dropdown-border-radius: 20px;
-    box-shadow: var(--bs-box-shadow);
     --bs-dropdown-font-size: .9rem;
+    box-shadow: var(--bs-box-shadow);
 }
 
 .dropdown-menu a.link-highlighted {
     border-radius: 10px;
     padding: .45rem .75rem;
+}
+
+.dropdown-menu li>span {
+    padding: .45rem .75rem;
+}
+
+.dropdown-menu div.line {
+    margin: .2rem .65rem;
+    border-top: 1px solid var(--sy-border-light);
 }
 
 .dropdown>a::after,

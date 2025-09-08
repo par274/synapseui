@@ -3,7 +3,7 @@
 <sx:block name="appContainer">
     <div class="d-flex vh-100 vw-100">
         <div class="side d-flex flex-column flex-shrink-0 text-white expanded">
-            <div class="border-end border-dark-subtle">
+            <div>
                 <div class="head d-flex justify-content-center align-items-center px-3 my-3 fs-normal">
                     <div class="label">[logo]</div>
                     <div js-tooltip="rule"
@@ -103,9 +103,27 @@
                                         {$app.translator->trans('model_selector.dropdown.text', [], 'chat')}
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li><a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block" href="#">Action</a></li>
-                                        <li><a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block" href="#">Another action</a></li>
-                                        <li><a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block" href="#">Something else here</a></li>
+                                        <li>
+                                            <span class="d-block text-muted fs-normal">Head</span>
+                                        </li>
+                                        <li>
+                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block" href="#">Action</a>
+                                        </li>
+                                        <li>
+                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block" href="#">Another action</a>
+                                        </li>
+                                        <li>
+                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block" href="#">Something else here</a>
+                                        </li>
+                                        <li>
+                                            <span class="d-block text-muted fs-normal">Another head 2</span>
+                                        </li>
+                                        <li>
+                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block" href="#">Another action</a>
+                                        </li>
+                                        <li>
+                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block" href="#">Something else here</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>

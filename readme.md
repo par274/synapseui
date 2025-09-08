@@ -17,15 +17,20 @@ oo    .d8P    `888'     888   888  d8(  888   888   888 o.  )88b 888    .o  `88.
 More info for SynapseUI, because very very early stage. [Introduce for SynapseUI](https://github.com/par274/synapseui/blob/main/.github/introduce.md)
 
 ## Which LLM Manager's are supported?
-Currently fully support for `ollama` but `llama.cpp` is developed. You have to define it in the `.env` file in the `LLM_MANAGER` variable and choose which one Docker will install.
+Currently fully support for `ollama` and `llama.cpp(llama-swap)`. You have to define it in the `.env` file in the `LLM_MANAGER` variable and choose which one Docker will install.
 
 - [Ollama API](https://github.com/par274/synapseui/tree/main/src/platform/Native/src/Adapters/Ollama)
 - [llama.cpp API](https://github.com/par274/synapseui/tree/main/src/platform/Native/src/Adapters/LLamacpp)
 
 But you should know that this will only apply to Docker.
 
+We currently recommend `llama.cpp`. However, this requires providing a model input when preloading `llama.cpp`. To overcome this, we used the `llama-swap` proxy server. This allows us to use any model we want, just like in ollama, and achieve our project goals.
+
+### Fact: so why didn't we use ollama as the default?
+Because llama.cpp feels faster and much more customizable now. Ollama is all set, but we still need a "sufficient" amount of customization. Ollama is like the end user, however in this project we want to enable the end user to use the chain model.
+
 ## GPU Support
-First you must change the `OLLAMA_UTILIZATION` cpu to NVIDIA(nvgpu) or AMD ROCm(amdgpu).
+First you must change the `UTILIZATION` cpu(or cuda) to NVIDIA(nvgpu) or AMD ROCm(amdgpu).
 
 Full support GPU list: https://github.com/ollama/ollama/blob/main/docs/gpu.md
 
@@ -50,6 +55,14 @@ sudo apt-get install -y nvidia-container-toolkit
 sudo nvidia-ctk runtime configure --runtime=docker
 sudo systemctl restart docker
 ```
+
+### NVIDIA & CPU
+`UTILIZATION=cuda`
+
+If you're on the llama.cpp platform, you can use cuda directly. This allows you to use both the CPU and the NVIDIA GPU simultaneously.
+But you need to be careful, if you want to force it to GPU or CPU, you need to define the model like `gemma3:1b_cpu`(or cuda) in functions like `chat()` or `generate()`.
+
+More info for: https://github.com/par274/synapseui/tree/main/.docker/llama-swap/swap-config.yaml
 
 ### AMD ROCm
 `UTILIZATION=amdgpu`

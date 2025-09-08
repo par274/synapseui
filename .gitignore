@@ -1,7 +1,7 @@
 .docker/nginx/certs
 .docker/.postgres
 .docker/ollama/*
-.docker/llamacpp/*
+.docker/llama-swap/*
 
 logs/*
 

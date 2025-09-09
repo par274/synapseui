@@ -1,14 +1,49 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import 'bootstrap-icons/font/bootstrap-icons.min.css';
 
-:root {
-    --bs-body-bg: #212121;
-    --bs-border-color: #555;
-    --bs-dark-border-subtle: #2f2f2f;
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bs-body-bg: #212121;
+        --bs-border-color: #555;
+        --bs-dark-border-subtle: #2f2f2f;
+    
+        --sy-side-bg-color: #181818;
+        --sy-border-default: #ffffff0d;
+        --sy-border-light: #ffffff26;
+        --sy-bg-color-adaptive: #ffffff1a;
+    }
 
-    --sy-border-default: #ffffff0d;
-    --sy-border-light: #ffffff26;
-    --sy-bg-color-adaptive: #ffffff1a;
+    .dropdown-menu {
+        --bs-dropdown-bg: #303030;
+        --bs-dropdown-border-color: var(--sy-border-light);
+        box-shadow: var(--bs-box-shadow);
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --bs-body-bg: #fff;
+        --bs-border-color: #555;
+        --bs-dark-border-subtle: #2f2f2f;
+        --bs-secondary-color: #8f8f8f;
+        --bs-light-rgb: 10, 10, 10;
+
+        --sy-side-bg-color: #f9f9f9;
+        --sy-border-default: #0d0d0d0d;
+        --sy-border-light: #00000024;
+        --sy-bg-color-adaptive: #0000000f;
+    }
+
+    .link-light:focus,
+    .link-light:hover {
+        color: RGBA(var(--bs-light-rgb), var(--bs-link-opacity, 1)) !important;
+    }
+
+    .dropdown-menu {
+        --bs-dropdown-bg: #f9f9f9;
+        --bs-dropdown-border-color: var(--sy-border-light);
+        box-shadow: var(--bs-box-shadow);
+    }
 }
 
 *:focus {
@@ -96,7 +131,7 @@ a.link-highlighted:hover {
     top: 0;
     left: 0;
     height: 100vh;
-    background-color: #181818;
+    background-color: var(--sy-side-bg-color);
     border-right: 1px solid var(--sy-border-default);
 }
 
@@ -167,11 +202,8 @@ body:has(.side.collapsed) .new-chat>.head>div {
     --bs-dropdown-min-width: 17rem;
     --bs-dropdown-padding-x: .35rem;
     --bs-dropdown-padding-y: .4rem;
-    --bs-dropdown-bg: #303030;
-    --bs-dropdown-border-color: hsla(0, 0%, 65.9%, 0.15);
     --bs-dropdown-border-radius: 20px;
     --bs-dropdown-font-size: .9rem;
-    box-shadow: var(--bs-box-shadow);
 }
 
 .dropdown-menu a.link-highlighted {
@@ -254,7 +286,7 @@ body:has(.side.collapsed) .new-chat>.head>div {
 }
 
 .skeleton-effect {
-    background: #484848;
+    background: var(--sy-bg-color-adaptive);
     height: 20px;
     margin-bottom: 10px;
     border-radius: 4px;

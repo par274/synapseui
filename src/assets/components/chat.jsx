@@ -1,14 +1,23 @@
 import { useTranslations } from "../translationsContext.jsx";
+import { useThemeMode } from '../themeContext.jsx';
 
 import React, { useState, useRef, useEffect } from "react";
-
-import MarkdownIt from "markdown-it";
+import Markdown from "react-markdown";
+import remarkGfm from 'remark-gfm';
+import remarkRehype from 'remark-rehype';
+import rehypeRaw from 'rehype-raw';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { dracula, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function ChatComponent() {
     const t = useTranslations();
 
+    const themeMode = useThemeMode();
+    const syntaxTheme = themeMode === 'dark' ? dracula : materialLight;
+
     const [userMessage, setUserMessage] = useState(t["chat.input.text"]);
     const [renderedOutput, setRenderedOutput] = useState("");
+    const [liveText, setLiveText] = useState("");
     const [typing, setTyping] = useState(false);
 
     const eventSourceRef = useRef(null);
@@ -16,33 +25,13 @@ export default function ChatComponent() {
     const tokenQueueRef = useRef([]);
     const runningRef = useRef(false);
     const endCheckTimerRef = useRef(null);
-    const liveDivRef = useRef(null);
 
-    const md = new MarkdownIt({
-        html: true,
-        linkify: true,
-        typographer: true,
-    });
-
-    function addStyleClasses(html) {
-        return html;
-    }
-
-    const flushBuffer = (force = false) => {
-        const buffer = bufferRef.current;
-        const backticks = (buffer.match(/```/g) || []).length;
-        const codeBlockOpen = backticks % 2 !== 0;
-
-        if (!force && codeBlockOpen) return;
-
-        if (buffer.trim()) {
-            const rendered = addStyleClasses(md.render(buffer));
-            setRenderedOutput((prev) => prev + rendered);
+    const flushBuffer = () => {
+        if (bufferRef.current.trim()) {
+            const r = bufferRef.current;
+            setRenderedOutput(prev => prev + r);
             bufferRef.current = "";
-        }
-
-        if (liveDivRef.current) {
-            liveDivRef.current.textContent = "";
+            setLiveText("");
         }
     };
 
@@ -55,21 +44,9 @@ export default function ChatComponent() {
         runningRef.current = true;
         const token = tokenQueueRef.current.shift();
         bufferRef.current += token;
+        setLiveText(prev => prev + token);
 
-        if (liveDivRef.current) {
-            for (const ch of token) {
-                const span = document.createElement("span");
-                span.textContent = ch === " " ? "\u00A0" : ch;
-                span.className = "token";
-                liveDivRef.current.appendChild(span);
-            }
-        }
-
-        if (/\n\n$/.test(bufferRef.current) || /```$/.test(bufferRef.current)) {
-            flushBuffer();
-        }
-
-        setTimeout(processQueue, 25);
+        setTimeout(() => requestAnimationFrame(processQueue), 16);
     };
 
     const handleSend = async () => {
@@ -77,9 +54,8 @@ export default function ChatComponent() {
         if (!msg) return;
 
         setRenderedOutput("");
+        setLiveText("");
         setTyping(true);
-
-        if (liveDivRef.current) liveDivRef.current.textContent = "";
 
         if (eventSourceRef.current) eventSourceRef.current.close();
 
@@ -88,44 +64,36 @@ export default function ChatComponent() {
         runningRef.current = false;
 
         try {
-            const res = await fetch('/chat', {
+            const res = await fetch("/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    chat_id: 123, // for testing
-                    message: msg,
-                }),
+                body: JSON.stringify({ chat_id: 123, message: msg }),
             });
 
-            if (!res.ok) {
-                throw new Error("Error for send messages.");
-            }
-
+            if (!res.ok) throw new Error("Error for send messages.");
             const { message } = await res.json();
 
             const es = new EventSource(`/chat?stream&message=${message}`);
             eventSourceRef.current = es;
 
             const decoders = {
-                ollama: (payload) => payload.message?.content ?? payload.token,
-                llamacpp: (payload) => payload.choices?.[0]?.delta?.content ?? "",
+                ollama: (p) => p.message?.content ?? p.token,
+                llamacpp: (p) => p.choices?.[0]?.delta?.content ?? "",
             };
 
-            Object.keys(decoders).forEach((adapter) => {
+            Object.entries(decoders).forEach(([adapter, decode]) => {
                 es.addEventListener(adapter, (event) => {
                     setTyping(false);
 
                     if (event.data === "END-OF-STREAM") {
-                        flushBuffer(true);
+                        flushBuffer();
                         es.close();
-                        setTyping(false);
                         return;
                     }
 
                     try {
                         const payload = JSON.parse(event.data);
-                        console.log(payload);
-                        let token = decoders[adapter](payload);
+                        let token = decode(payload);
                         if (typeof token !== "string") token = JSON.stringify(token);
 
                         tokenQueueRef.current.push(token);
@@ -137,7 +105,7 @@ export default function ChatComponent() {
             });
 
             es.onerror = () => {
-                flushBuffer(true);
+                flushBuffer();
                 setTyping(false);
             };
         } catch (err) {
@@ -148,8 +116,8 @@ export default function ChatComponent() {
 
         clearInterval(endCheckTimerRef.current);
         endCheckTimerRef.current = setInterval(() => {
-            if (!runningRef.current && tokenQueueRef.current.length === 0 && bufferRef.current.trim()) {
-                flushBuffer(true);
+            if (!runningRef.current && tokenQueueRef.current.length === 0) {
+                flushBuffer();
             }
         }, 1000);
     };
@@ -164,19 +132,51 @@ export default function ChatComponent() {
     return (
         <div>
             <div className="input-group">
-                <input className="form-control" type="text" value={userMessage} onChange={(e) => setUserMessage(e.target.value)} />
-                <button className="btn btn-outline-secondary" onClick={handleSend}>Send</button>
+                <input
+                    className="form-control"
+                    type="text"
+                    value={userMessage}
+                    onChange={(e) => setUserMessage(e.target.value)}
+                />
+                <button className="btn btn-outline-secondary" onClick={handleSend}>
+                    Send
+                </button>
             </div>
-            <div class="mt-3">
+
+            <div className="mt-3">
                 <div className={`typing-dots ${typing ? "" : "hidden"}`}>
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <span></span><span></span><span></span>
                 </div>
 
-                <div dangerouslySetInnerHTML={{ __html: renderedOutput }}></div>
+                <div>
+                    <Markdown
+                        remarkPlugins={[remarkGfm, remarkRehype]}
+                        rehypePlugins={[rehypeRaw]}
+                        components={{
+                            table: ({ node, ...props }) => (
+                                <table className="table table-striped" {...props} />
+                            ),
+                            th: ({ node, ...props }) => <th scope="col" {...props} />,
+                            td: ({ node, ...props }) => <td scope="row" {...props} />,
+                            code: ({ node, inline, className, children, ...props }) => {
+                                const match = /language-(\w+)/.exec(className || '');
+                                return !inline && match ? (
+                                    <SyntaxHighlighter style={syntaxTheme} PreTag="pre" language={match[1]} {...props}>
+                                        {String(children).replace(/\n$/, '')}
+                                    </SyntaxHighlighter>
+                                ) : (
+                                    <code className={className} {...props}>
+                                        {children}
+                                    </code>
+                                );
+                            }
+                        }}
+                    >
+                        {renderedOutput}
+                    </Markdown>
+                </div>
 
-                <div className="text-break" ref={liveDivRef}></div>
+                {liveText && <div className="output">{liveText}</div>}
             </div>
         </div>
     );

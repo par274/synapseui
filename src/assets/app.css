@@ -6,7 +6,7 @@
         --bs-body-bg: #212121;
         --bs-border-color: #555;
         --bs-dark-border-subtle: #2f2f2f;
-    
+
         --sy-side-bg-color: #181818;
         --sy-border-default: #ffffff0d;
         --sy-border-light: #ffffff26;
@@ -258,31 +258,8 @@ body:has(.side.collapsed) .new-chat>.head>div {
     animation-delay: 0.6s;
 }
 
-@keyframes blink {
-
-    0%,
-    80%,
-    100% {
-        opacity: 0.2;
-        transform: translateY(0);
-    }
-
-    40% {
-        opacity: 1;
-        transform: translateY(-2px);
-    }
-}
-
-.token {
-    display: inline;
-    opacity: 0;
-    animation: typewriter .3s forwards;
-}
-
-@keyframes typewriter {
-    to {
-        opacity: 1;
-    }
+.chat-root .output {
+    white-space: pre-wrap;
 }
 
 .skeleton-effect {
@@ -320,5 +297,20 @@ body:has(.side.collapsed) .new-chat>.head>div {
 
     100% {
         opacity: 1;
+    }
+}
+
+@keyframes blink {
+
+    0%,
+    80%,
+    100% {
+        opacity: 0.2;
+        transform: translateY(0);
+    }
+
+    40% {
+        opacity: 1;
+        transform: translateY(-2px);
     }
 }

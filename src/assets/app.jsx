@@ -1,4 +1,5 @@
 import { TranslationsProvider } from "./translationsContext.jsx";
+import { ThemeProvider } from './themeContext.jsx';
 
 import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
@@ -133,13 +134,15 @@ const AppInit = (function () {
 
         const content = (
             <TranslationsProvider>
-                {withSkeleton ? (
-                    <Suspense fallback={<LoadingSkeleton />}>
+                <ThemeProvider>
+                    {withSkeleton ? (
+                        <Suspense fallback={<LoadingSkeleton />}>
+                            <Component />
+                        </Suspense>
+                    ) : (
                         <Component />
-                    </Suspense>
-                ) : (
-                    <Component />
-                )}
+                    )}
+                </ThemeProvider>
             </TranslationsProvider>
         );
 

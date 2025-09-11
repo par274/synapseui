@@ -123,7 +123,7 @@ class IndexController extends Controller
                 $llmAdapter->chat([
                     'model' => 'gemma3:1b', # for llama-swap
                     'messages' => [
-                        ['role' => 'system', 'content' => 'Answer in turkish'],
+                        ['role' => 'system', 'content' => 'Answer in english'],
                         ['role' => 'user', 'content' => $request->query->get('message', 'hi')]
                     ]
                 ], true, function (string $token)

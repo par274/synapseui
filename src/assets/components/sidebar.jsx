@@ -1,7 +1,5 @@
 import { useEffect } from "react";
 
-import { Tooltip } from "bootstrap";
-
 export default function SidebarComponent() {
     useEffect(() => {
         const btn = document.querySelector('[js-ref="side-toggle"]');

@@ -122,14 +122,47 @@ const AppInit = (function () {
         );
     }
 
-    function mountIfExists(selector, Component, { withSkeleton = false } = {}) {
-        const el = document.querySelector(selector);
-        if (!el) return;
+    /**
+     * Mounts a React component into the DOM.
+     * @param {string|HTMLElement|null} selectorOrEl - CSS selector or HTMLElement to mount into
+     * @param {React.Component} Component - React component
+     * @param {Object} options
+     * @param {boolean} options.withSkeleton - Use Suspense skeleton fallback
+     * @param {boolean} options.useHeadless - Create a div if selector doesn't exist
+     */
+    function mountIfExists(selectorOrEl, Component, { withSkeleton = false, useHeadless = false } = {}) {
+        let el;
 
-        let root = roots.get(selector);
+        if (typeof selectorOrEl === 'string') {
+            el = document.querySelector(selectorOrEl);
+        } else if (selectorOrEl instanceof HTMLElement) {
+            el = selectorOrEl;
+        }
+
+        if (!el) return null;
+
+        if (useHeadless) {
+            let container = document.querySelector('.react-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'react-container';
+                document.body.appendChild(container);
+            }
+
+            el = document.createElement('div');
+            el.dataset.headless = "true";
+            container.appendChild(el);
+        }
+
+        let root = roots.get(el);
         if (!root) {
             root = ReactDOM.createRoot(el);
-            roots.set(selector, root);
+            roots.set(el, root);
+        }
+
+        let props = { ...el.dataset };
+        if (props.config) {
+            try { props = { ...props, ...JSON.parse(props.config) }; } catch (e) { console.warn("Invalid JSON in data-config", e); }
         }
 
         const content = (
@@ -137,30 +170,50 @@ const AppInit = (function () {
                 <ThemeProvider>
                     {withSkeleton ? (
                         <Suspense fallback={<LoadingSkeleton />}>
-                            <Component />
+                            <Component {...props} />
                         </Suspense>
                     ) : (
-                        <Component />
+                        <Component {...props} />
                     )}
                 </ThemeProvider>
             </TranslationsProvider>
         );
 
         root.render(content);
+
+        return el;
+    }
+
+    /**
+     * Unmount a React component and clean up
+     * @param {string|HTMLElement} selectorOrEl
+     */
+    function unmount(selectorOrEl) {
+        let el;
+        if (typeof selectorOrEl === 'string') {
+            el = document.querySelector(selectorOrEl);
+        } else if (selectorOrEl instanceof HTMLElement) {
+            el = selectorOrEl;
+        }
+
+        if (!el) return;
+
+        const root = roots.get(el);
+        if (root) {
+            root.unmount();
+            roots.delete(el);
+
+            if (el.dataset.headless === "true") {
+                el.remove();
+            }
+        }
     }
 
     return {
-        mountTabComponent: function (TabComponent) {
-            mountIfExists('[js-ref="tab"] .js-ref', TabComponent);
-        },
-        mountChat: function (ChatComponent) {
-            mountIfExists('.chat-root', ChatComponent, { withSkeleton: true });
-        },
-        mountSidebarComponent: function (SidebarComponent) {
-            mountIfExists('[js-ref="side-toggle"] .js-ref', SidebarComponent);
-        }
+        mountIfExists,
+        unmount
     };
 })();
-AppInit.mountTabComponent(TabComponent);
-AppInit.mountChat(ChatComponent);
-AppInit.mountSidebarComponent(SidebarComponent);
+AppInit.mountIfExists('[js-ref="tab"]', TabComponent, { withSkeleton: false, useHeadless: true });
+AppInit.mountIfExists('.chat-root', ChatComponent, { withSkeleton: true });
+AppInit.mountIfExists('[js-ref="side-toggle"]', SidebarComponent, { withSkeleton: false, useHeadless: true });

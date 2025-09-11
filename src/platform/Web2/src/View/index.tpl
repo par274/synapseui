@@ -22,7 +22,7 @@
                     </div>
                     <div js-tooltip="true" js-tooltip-rule="collapsed" js-tooltip-placement="right" js-tooltip-offset="[0, 15]"
                         class="side-link d-flex align-items-center px-2 py-1 w-100 position-relative">
-                        <a js-tab-href="chat-builder"
+                        <a js-ref="tab" js-tab-href="chat-builder"
                             class="link-light link-offset-2 link-underline-opacity-0" href="#">
                             <i class="bi bi-bricks"></i>
                             <span class="label">{$app.translator->trans('interactive.menu.chat_builder', [], 'sidebar')}</span>
@@ -62,9 +62,9 @@
                             <span class="label">[chat 1]</span>
                         </a>
                         <div class="label ms-auto">
-                            <span class="badge text-bg-primary ms-1">gemma3:1b</span>
-                            <span class="badge text-bg-secondary ms-1">chat</span>
-                            <span class="badge text-bg-warning ms-1">vision</span>
+                            <span class="badge text-bg-primary fw-semibold ms-1">gemma3:1b</span>
+                            <span class="badge text-bg-secondary fw-semibold ms-1">chat</span>
+                            <span class="badge text-bg-warning fw-semibold ms-1">vision</span>
                         </div>
                     </div>
                     <div class="side-link d-flex align-items-center px-2 py-1 w-100 position-relative">

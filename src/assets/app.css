@@ -1,6 +1,10 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import 'bootstrap-icons/font/bootstrap-icons.min.css';
 
+:root {
+    --sy-ff: ui-sans-serif, -apple-system, system-ui, Segoe UI, Helvetica, Apple Color Emoji, Arial, sans-serif, Segoe UI Emoji, Segoe UI Symbol;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --bs-body-bg: #212121;
@@ -11,6 +15,8 @@
         --sy-border-default: #ffffff0d;
         --sy-border-light: #ffffff26;
         --sy-bg-color-adaptive: #ffffff1a;
+
+        --sy-codeblock-bg-color: #171717;
     }
 
     .dropdown-menu {
@@ -32,6 +38,8 @@
         --sy-border-default: #0d0d0d0d;
         --sy-border-light: #00000024;
         --sy-bg-color-adaptive: #0000000f;
+
+        --sy-codeblock-bg-color: #f9f9f9;
     }
 
     .link-light:focus,
@@ -52,9 +60,17 @@
 
 body {
     font-feature-settings: normal;
-    font-family: ui-sans-serif, -apple-system, system-ui, Segoe UI, Helvetica, Apple Color Emoji, Arial, sans-serif, Segoe UI Emoji, Segoe UI Symbol;
+    font-family: var(--sy-ff);
     font-variation-settings: normal;
     font-size: .90rem;
+}
+
+.bg-codeblock {
+    background-color: var(--sy-codeblock-bg-color) !important;
+}
+
+.ff-override {
+    font-family: var(--sy-ff) !important;
 }
 
 .fs-lg {
@@ -63,6 +79,10 @@ body {
 
 .fs-normal {
     font-size: 1rem;
+}
+
+.fs-small {
+    font-size: .75rem;
 }
 
 .h-35 {
@@ -260,6 +280,11 @@ body:has(.side.collapsed) .new-chat>.head>div {
 
 .chat-root .output {
     white-space: pre-wrap;
+}
+
+pre>pre,
+pre>pre>code {
+    background-color: var(--sy-codeblock-bg-color) !important;
 }
 
 .skeleton-effect {

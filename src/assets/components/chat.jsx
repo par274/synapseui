@@ -1,19 +1,10 @@
 import { useTranslations } from "../translationsContext.jsx";
-import { useThemeMode } from '../themeContext.jsx';
 
 import React, { useState, useRef, useEffect } from "react";
-import Markdown from "react-markdown";
-import remarkGfm from 'remark-gfm';
-import remarkRehype from 'remark-rehype';
-import rehypeRaw from 'rehype-raw';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { dracula, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { MarkdownContent } from "../markdownContent.jsx";
 
 export default function ChatComponent() {
     const t = useTranslations();
-
-    const themeMode = useThemeMode();
-    const syntaxTheme = themeMode === 'dark' ? dracula : materialLight;
 
     const [userMessage, setUserMessage] = useState(t["chat.input.text"]);
     const [renderedOutput, setRenderedOutput] = useState("");
@@ -28,10 +19,8 @@ export default function ChatComponent() {
 
     const flushBuffer = () => {
         if (bufferRef.current.trim()) {
-            const r = bufferRef.current;
-            setRenderedOutput(prev => prev + r);
+            setRenderedOutput(prev => prev + bufferRef.current);
             bufferRef.current = "";
-            setLiveText("");
         }
     };
 
@@ -129,6 +118,23 @@ export default function ChatComponent() {
         };
     }, []);
 
+    const PreWithLabel = ({ children, lang, ...props }) => (
+        <pre {...props} className="rounded-4 py-2 px-3 relative">
+            <div className="d-flex align-items-center justify-content-between mb-4 ff-override">
+                <div>
+                    <span className="text-light fs-small">{lang}</span>
+                </div>
+                <div>
+                    <a className="link-light link-offset-2 link-underline-opacity-0 fs-small" href="#">
+                        <i className="bi bi-clipboard-check"></i>
+                        <span className="label">Kodu kopyala</span>
+                    </a>
+                </div>
+            </div>
+            {children}
+        </pre>
+    );
+
     return (
         <div>
             <div className="input-group">
@@ -143,40 +149,17 @@ export default function ChatComponent() {
                 </button>
             </div>
 
-            <div className="mt-3">
+            <div className="mt-3 fs-normal">
                 <div className={`typing-dots ${typing ? "" : "hidden"}`}>
                     <span></span><span></span><span></span>
                 </div>
 
                 <div>
-                    <Markdown
-                        remarkPlugins={[remarkGfm, remarkRehype]}
-                        rehypePlugins={[rehypeRaw]}
-                        components={{
-                            table: ({ node, ...props }) => (
-                                <table className="table table-striped" {...props} />
-                            ),
-                            th: ({ node, ...props }) => <th scope="col" {...props} />,
-                            td: ({ node, ...props }) => <td scope="row" {...props} />,
-                            code: ({ node, inline, className, children, ...props }) => {
-                                const match = /language-(\w+)/.exec(className || '');
-                                return !inline && match ? (
-                                    <SyntaxHighlighter style={syntaxTheme} PreTag="pre" language={match[1]} {...props}>
-                                        {String(children).replace(/\n$/, '')}
-                                    </SyntaxHighlighter>
-                                ) : (
-                                    <code className={className} {...props}>
-                                        {children}
-                                    </code>
-                                );
-                            }
-                        }}
-                    >
-                        {renderedOutput}
-                    </Markdown>
+                    <MarkdownContent
+                        id="chat-output"
+                        content={liveText}
+                    />
                 </div>
-
-                {liveText && <div className="output">{liveText}</div>}
             </div>
         </div>
     );

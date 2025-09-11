@@ -17,32 +17,40 @@
                 <div
                     class="interactive-menu d-flex flex-column justify-content-center align-items-start px-2 my-3 gap-1 mt-3">
                     <div class="side-head d-flex align-items-center px-2 py-1 w-100 position-relative">
-                        <span class="label text-muted">{$app.translator->trans('interactive.menu.text', [], 'sidebar')}</span>
+                        <span class="label text-muted">
+                            {$app.translator->trans('interactive.menu.text', [], 'sidebar')}
+                        </span>
                     </div>
-                    <div js-tooltip="true" js-tooltip-rule="collapsed" js-tooltip-placement="right" js-tooltip-offset="[0, 15]"
+                    <div js-tooltip="true" js-tooltip-rule="collapsed" js-tooltip-placement="right"
+                        js-tooltip-offset="[0, 15]"
                         class="side-link d-flex align-items-center px-2 py-1 w-100 position-relative">
                         <a js-ref="tab" js-tab-href="chat-builder"
                             class="link-light link-offset-2 link-underline-opacity-0" href="#">
                             <i class="bi bi-bricks"></i>
-                            <span class="label">{$app.translator->trans('interactive.menu.chat_builder', [], 'sidebar')}</span>
+                            <span class="label">
+                                {$app.translator->trans('interactive.menu.chat_builder', [], 'sidebar')}
+                            </span>
                         </a>
                     </div>
-                    <div js-tooltip="true" js-tooltip-rule="collapsed" js-tooltip-placement="right" js-tooltip-offset="[0, 15]"
+                    <div js-tooltip="true" js-tooltip-rule="collapsed" js-tooltip-placement="right"
+                        js-tooltip-offset="[0, 15]"
                         class="side-link d-flex align-items-center px-2 py-1 w-100 position-relative mt-3 active">
                         <a js-ref="tab" js-tab-href="new-chat" class="link-light link-offset-2 link-underline-opacity-0"
                             href="#">
                             <i class="bi bi-pencil-square"></i>
-                            <span class="label">{$app.translator->trans('new_chat', [], 'sidebar')}</span>                            
+                            <span class="label">{$app.translator->trans('new_chat', [], 'sidebar')}</span>
                         </a>
                     </div>
-                    <div js-tooltip="true" js-tooltip-rule="collapsed" js-tooltip-placement="right" js-tooltip-offset="[0, 15]"
+                    <div js-tooltip="true" js-tooltip-rule="collapsed" js-tooltip-placement="right"
+                        js-tooltip-offset="[0, 15]"
                         class="side-link d-flex align-items-center px-2 py-1 w-100 position-relative">
                         <a class="link-light link-offset-2 link-underline-opacity-0" href="#">
                             <i class="bi bi-search"></i>
                             <span class="label">{$app.translator->trans('search_chat', [], 'sidebar')}</span>
                         </a>
                     </div>
-                    <div js-tooltip="true" js-tooltip-rule="collapsed" js-tooltip-placement="right" js-tooltip-offset="[0, 15]"
+                    <div js-tooltip="true" js-tooltip-rule="collapsed" js-tooltip-placement="right"
+                        js-tooltip-offset="[0, 15]"
                         class="side-link d-flex align-items-center px-2 py-1 w-100 position-relative">
                         <a class="link-light link-offset-2 link-underline-opacity-0" href="#">
                             <i class="bi bi-archive"></i>
@@ -88,15 +96,14 @@
             </div>
         </div>
         <div class="main w-100">
-            <div
-                class="new-chat d-flex flex-column flex-shrink-1 w-100 h-100 fs-lg active">
+            <div class="new-chat d-flex flex-column flex-shrink-1 w-100 h-100 fs-lg active">
                 <div class="head d-flex flex-column align-items-start justify-content-start h-35">
                     <div class="position-fixed">
                         <div class="d-flex align-items-center justify-content-between px-3 pt-1 my-3 w-100">
                             <div>
                                 <div class="dropdown">
-                                    <a class="label link-highlighted link-light link-offset-2 link-underline-opacity-0" href="#" type="button"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <a class="label link-highlighted link-light link-offset-2 link-underline-opacity-0"
+                                        href="#" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         {$app.translator->trans('model_selector.dropdown.text', [], 'chat')}
                                     </a>
                                     <ul class="dropdown-menu">
@@ -104,31 +111,39 @@
                                             <span class="d-block text-muted fs-normal">Head</span>
                                         </li>
                                         <li>
-                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block" href="#">Action</a>
+                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block"
+                                                href="#">Action</a>
                                         </li>
                                         <li>
-                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block" href="#">Another action</a>
+                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block"
+                                                href="#">Another action</a>
                                         </li>
                                         <li>
-                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block" href="#">Something else here</a>
+                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block"
+                                                href="#">Something else here</a>
                                         </li>
                                         <div class="line"></div>
                                         <li>
                                             <span class="d-block text-muted fs-normal">Another head 2</span>
                                         </li>
                                         <li>
-                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block" href="#">Another action</a>
+                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block"
+                                                href="#">Another action</a>
                                         </li>
                                         <li>
-                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block" href="#">Something else here</a>
+                                            <a class="link-highlighted link-light link-offset-2 link-underline-opacity-0 d-block"
+                                                href="#">Something else here</a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                             <div>
-                                <a js-tooltip="true" class="link-highlighted link-light link-offset-2 link-underline-opacity-0" href="#">
+                                <a js-tooltip="true"
+                                    class="link-highlighted link-light link-offset-2 link-underline-opacity-0" href="#">
                                     <i class="bi bi-eye"></i>
-                                    <span class="label d-none">{$app.translator->trans('anonymous_chat.text', [], 'chat')}</span>
+                                    <span class="label d-none">
+                                        {$app.translator->trans('anonymous_chat.text', [], 'chat')}
+                                    </span>
                                 </a>
                             </div>
                         </div>
@@ -141,8 +156,7 @@
                     <div class="chat-root w-50"></div>
                 </div>
             </div>
-            <div
-                class="chat-builder d-flex flex-column flex-shrink-1 w-100 h-100 fs-lg d-none">
+            <div class="chat-builder d-flex flex-column flex-shrink-1 w-100 h-100 fs-lg d-none">
                 <div class="px-3 my-3">OK</div>
             </div>
         </div>

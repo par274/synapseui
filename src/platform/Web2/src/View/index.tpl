@@ -11,7 +11,6 @@
                         <a class="link-light link-offset-2 link-underline-opacity-0" href="#">
                             <span class="label d-none">{$app.translator->trans('toggle.text', [], 'sidebar')}</span>
                             <i class="bi bi-layout-sidebar"></i>
-                            <div class="js-ref"></div>
                         </a>
                     </div>
                 </div>
@@ -26,7 +25,6 @@
                             class="link-light link-offset-2 link-underline-opacity-0" href="#">
                             <i class="bi bi-bricks"></i>
                             <span class="label">{$app.translator->trans('interactive.menu.chat_builder', [], 'sidebar')}</span>
-                            <div class="js-ref"></div>
                         </a>
                     </div>
                     <div js-tooltip="true" js-tooltip-rule="collapsed" js-tooltip-placement="right" js-tooltip-offset="[0, 15]"
@@ -34,8 +32,7 @@
                         <a js-ref="tab" js-tab-href="new-chat" class="link-light link-offset-2 link-underline-opacity-0"
                             href="#">
                             <i class="bi bi-pencil-square"></i>
-                            <span class="label">{$app.translator->trans('new_chat', [], 'sidebar')}</span>
-                            <div class="js-ref"></div>
+                            <span class="label">{$app.translator->trans('new_chat', [], 'sidebar')}</span>                            
                         </a>
                     </div>
                     <div js-tooltip="true" js-tooltip-rule="collapsed" js-tooltip-placement="right" js-tooltip-offset="[0, 15]"

@@ -9,7 +9,7 @@ import json from '@rollup/plugin-json';
 
 export default [
     {
-        input: 'src/assets/app.jsx',
+        input: 'ui/js/app.jsx',
         output: {
             file: 'src/platform/Web2/assets/app.bundle.js',
             format: 'esm',
@@ -21,8 +21,15 @@ export default [
             commonjs(),
             babel({
                 babelHelpers: 'bundled',
-                presets: ['@babel/preset-react'],
-                extensions: ['.js', '.jsx']
+                extensions: ['.js', '.jsx'],
+                presets: [
+                    [
+                        '@babel/preset-react',
+                        {
+                            runtime: 'automatic'
+                        }
+                    ]
+                ],
             }),
             replace({
                 'process.env.NODE_ENV': JSON.stringify('production'),
@@ -35,10 +42,10 @@ export default [
             }),
             json()
         ],
-        external: ['@olton/metroui']
+        external: []
     },
     {
-        input: 'src/assets/app.css',
+        input: 'ui/css/app.css',
         output: {
             file: 'src/platform/Web2/assets/app.bundle.css'
         },

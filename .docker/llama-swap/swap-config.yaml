@@ -15,3 +15,19 @@ models:
             --device CUDA0
             --device-draft CUDA1
         proxy: "http://0.0.0.0:9503"
+    "qwen3_4b-thinking-2507_cpu":
+        cmd: |
+            /app/llama-server
+            --model /models/Qwen3-4B-Thinking-2507-Q3_K_M.gguf
+            --host 0.0.0.0 --port 9503
+            --ctx-size 2048
+        proxy: "http://0.0.0.0:9503"
+    "qwen3_4b-thinking-2507_cuda":
+        cmd: |
+            /app/llama-server
+            --model /models/Qwen3-4B-Thinking-2507-Q3_K_M.gguf
+            --host 0.0.0.0 --port 9503
+            --ctx-size 2048
+            --device CUDA0
+            --device-draft CUDA1
+        proxy: "http://0.0.0.0:9503"

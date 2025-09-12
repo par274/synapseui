@@ -109,7 +109,7 @@ body {
     width: 60%;
 }
 
-i.bi+.label {
+i.bi+.label, .label+i.bi {
     margin-left: .5rem;
 }
 
@@ -279,7 +279,7 @@ body:has(.side.collapsed) .new-chat>.head>div {
 }
 
 .chat-root .output {
-    white-space: pre-wrap;
+    overflow-anchor: auto;
 }
 
 pre>pre,

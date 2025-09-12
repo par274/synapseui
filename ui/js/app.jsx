@@ -1,7 +1,7 @@
-import { TranslationsProvider } from "./translationsContext.jsx";
-import { ThemeProvider } from './themeContext.jsx';
+import { TranslationsProvider } from "./helpers/translations.jsx";
+import { ThemeProvider } from "./helpers/theme.jsx";
 
-import React, { lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 
 import "bootstrap";
@@ -192,7 +192,7 @@ const AppInit = (function () {
         let el;
         if (typeof selectorOrEl === 'string') {
             el = document.querySelector(selectorOrEl);
-        } else if (selectorOrEl instanceof HTMLElement) {
+        } else if (selectorOrEl instanceof Element) {
             el = selectorOrEl;
         }
 

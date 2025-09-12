@@ -1,13 +1,12 @@
-import { useTranslations } from "../translationsContext.jsx";
+import { useTranslations } from "../helpers/translations.jsx";
+import { MarkdownContent } from "../helpers/markdown-content.jsx";
 
-import React, { useState, useRef, useEffect } from "react";
-import { MarkdownContent } from "../markdownContent.jsx";
+import { useState, useRef, useEffect } from "react";
 
 export default function ChatComponent() {
     const t = useTranslations();
 
     const [userMessage, setUserMessage] = useState(t["chat.input.text"]);
-    const [renderedOutput, setRenderedOutput] = useState("");
     const [liveText, setLiveText] = useState("");
     const [typing, setTyping] = useState(false);
 
@@ -17,32 +16,39 @@ export default function ChatComponent() {
     const runningRef = useRef(false);
     const endCheckTimerRef = useRef(null);
 
-    const flushBuffer = () => {
-        if (bufferRef.current.trim()) {
-            setRenderedOutput(prev => prev + bufferRef.current);
-            bufferRef.current = "";
-        }
-    };
-
     const processQueue = () => {
-        if (tokenQueueRef.current.length === 0) {
+        if (tokenQueueRef.current.length === 0 && bufferRef.current.length === 0) {
             runningRef.current = false;
             return;
         }
 
         runningRef.current = true;
-        const token = tokenQueueRef.current.shift();
-        bufferRef.current += token;
-        setLiveText(prev => prev + token);
 
-        setTimeout(() => requestAnimationFrame(processQueue), 16);
+        // Buffer boşsa queue'dan token al
+        if (!bufferRef.current.length && tokenQueueRef.current.length > 0) {
+            const nextToken = tokenQueueRef.current.shift();
+            if (typeof nextToken === "string") {
+                bufferRef.current = nextToken.split("");
+            }
+        }
+
+        // Buffer’dan küçük batch al
+        if (bufferRef.current.length > 0) {
+            const batchSize = Math.min(4, bufferRef.current.length);
+            const chunk = bufferRef.current.splice(0, batchSize);
+            setLiveText(prev => prev + chunk.join(""));
+
+            // Çok kısa micro-delay ile bir sonraki frame’e geç
+            setTimeout(() => requestAnimationFrame(processQueue), 2);
+        } else {
+            requestAnimationFrame(processQueue);
+        }
     };
 
     const handleSend = async () => {
         const msg = userMessage.trim();
         if (!msg) return;
 
-        setRenderedOutput("");
         setLiveText("");
         setTyping(true);
 
@@ -75,7 +81,6 @@ export default function ChatComponent() {
                     setTyping(false);
 
                     if (event.data === "END-OF-STREAM") {
-                        flushBuffer();
                         es.close();
                         return;
                     }
@@ -94,7 +99,6 @@ export default function ChatComponent() {
             });
 
             es.onerror = () => {
-                flushBuffer();
                 setTyping(false);
             };
         } catch (err) {
@@ -102,13 +106,6 @@ export default function ChatComponent() {
             setTyping(false);
             return;
         }
-
-        clearInterval(endCheckTimerRef.current);
-        endCheckTimerRef.current = setInterval(() => {
-            if (!runningRef.current && tokenQueueRef.current.length === 0) {
-                flushBuffer();
-            }
-        }, 1000);
     };
 
     useEffect(() => {
@@ -154,11 +151,8 @@ export default function ChatComponent() {
                     <span></span><span></span><span></span>
                 </div>
 
-                <div>
-                    <MarkdownContent
-                        id="chat-output"
-                        content={liveText}
-                    />
+                <div className="output">
+                    <MarkdownContent content={liveText} />
                 </div>
             </div>
         </div>

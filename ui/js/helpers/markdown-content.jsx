@@ -24,9 +24,9 @@
  *   by restoring type definitions (Props, interfaces, etc.)
  */
 
-import { useThemeMode } from '../../src/assets/themeContext.jsx';
+import { useThemeMode } from "./theme.jsx";
 
-import React, { memo, useMemo } from "react";
+import { memo, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
@@ -89,7 +89,18 @@ const MemoizedMarkdownBlock = memo(({ content, className }) => {
                             {children}
                         </code>
                     );
-                }
+                },
+                a: ({ node, children, ...props }) => (
+                    <a
+                        {...props}
+                        className="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <span className="label">{children}</span>
+                        <i className="bi bi-box-arrow-up-right fs-small"></i>
+                    </a>
+                )
             }}
             className={className}
         >

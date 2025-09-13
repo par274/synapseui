@@ -45,7 +45,7 @@ export default function ChatComponent() {
             let speedMultiplier = 1;
 
             if (streamEndedRef.current && queueLength === 0) {
-                speedMultiplier = 6;
+                speedMultiplier = 10;
             } else if (queueLength > 20) {
                 speedMultiplier = 4;
             } else if (queueLength > 15) {
@@ -59,7 +59,7 @@ export default function ChatComponent() {
             } else if (queueLength > 0) {
                 speedMultiplier = 2.2;
             } else {
-                speedMultiplier = streamEndedRef.current ? 6 : 1.4;
+                speedMultiplier = streamEndedRef.current ? 10 : 1.4;
             }
 
             const baseSpeed = Math.min(180, Math.max(15, characterRateRef.current));

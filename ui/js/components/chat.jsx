@@ -11,13 +11,15 @@ export default function ChatComponent() {
     const [liveTextNormal, setLiveTextNormal] = useState("");
     const [liveTextThinking, setLiveTextThinking] = useState("");
     const [thinkingAreaExpanded, setThinkingAreaExpanded] = useState(false);
+    const [isThinkingComplete, setIsThinkingComplete] = useState(false);
 
     const eventSourceRef = useRef(null);
-    const bufferRef = useRef("");
+    const bufferRef = useRef([]);
     const tokenQueueRef = useRef([]);
     const runningRef = useRef(false);
     const endCheckTimerRef = useRef(null);
     const inThinkingRef = useRef(false);
+    const thinkingEndedRef = useRef(false);
     const lastTokenTimeRef = useRef(0);
     const characterRateRef = useRef(80);
     const totalTokensReceivedRef = useRef(0);
@@ -25,7 +27,20 @@ export default function ChatComponent() {
     const displaySpeedRef = useRef(80);
     const streamEndedRef = useRef(false);
 
+    const checkThinkingComplete = () => {
+        if (!thinkingEndedRef.current || isThinkingComplete) return;
+
+        const hasThinkingInQueue = tokenQueueRef.current.some(token => token.thinking);
+        const hasThinkingInBuffer = bufferRef.current.length > 0 && bufferRef.currentThinking;
+
+        if (!hasThinkingInQueue && !hasThinkingInBuffer) {
+            setIsThinkingComplete(true);
+        }
+    };
+
     const processQueue = () => {
+        checkThinkingComplete();
+
         if (tokenQueueRef.current.length === 0 && bufferRef.current.length === 0) {
             runningRef.current = false;
             return;
@@ -44,22 +59,43 @@ export default function ChatComponent() {
 
             let speedMultiplier = 1;
 
-            if (streamEndedRef.current && queueLength === 0) {
-                speedMultiplier = 10;
-            } else if (queueLength > 20) {
-                speedMultiplier = 4;
-            } else if (queueLength > 15) {
-                speedMultiplier = 3.2;
-            } else if (queueLength > 10) {
-                speedMultiplier = 2.5;
-            } else if (queueLength > 5) {
-                speedMultiplier = 1.8;
-            } else if (queueLength > 2) {
-                speedMultiplier = 1.3;
-            } else if (queueLength > 0) {
-                speedMultiplier = 2.2;
+            if (isThinkingComplete) {
+                if (streamEndedRef.current && queueLength === 0) {
+                    speedMultiplier = 15;
+                } else if (queueLength > 20) {
+                    speedMultiplier = 8;
+                } else if (queueLength > 15) {
+                    speedMultiplier = 6;
+                } else if (queueLength > 10) {
+                    speedMultiplier = 5;
+                } else if (queueLength > 5) {
+                    speedMultiplier = 4;
+                } else if (queueLength > 2) {
+                    speedMultiplier = 3.5;
+                } else if (queueLength > 0) {
+                    speedMultiplier = 4;
+                } else {
+                    speedMultiplier = streamEndedRef.current ? 20 : 3.5;
+                }
             } else {
-                speedMultiplier = streamEndedRef.current ? 10 : 1.4;
+                // Normal thinking durumu
+                if (streamEndedRef.current && queueLength === 0) {
+                    speedMultiplier = 10;
+                } else if (queueLength > 20) {
+                    speedMultiplier = 4;
+                } else if (queueLength > 15) {
+                    speedMultiplier = 3.2;
+                } else if (queueLength > 10) {
+                    speedMultiplier = 2.5;
+                } else if (queueLength > 5) {
+                    speedMultiplier = 1.8;
+                } else if (queueLength > 2) {
+                    speedMultiplier = 1.3;
+                } else if (queueLength > 0) {
+                    speedMultiplier = 2.2;
+                } else {
+                    speedMultiplier = streamEndedRef.current ? 10 : 1.4;
+                }
             }
 
             const baseSpeed = Math.min(180, Math.max(15, characterRateRef.current));
@@ -70,8 +106,8 @@ export default function ChatComponent() {
 
             let maxSpeedChange;
             if (speedDiff > 0) {
-                if (streamEndedRef.current) {
-                    maxSpeedChange = Math.max(20, Math.abs(speedDiff) * 0.6);
+                if (streamEndedRef.current || isThinkingComplete) {
+                    maxSpeedChange = Math.max(50, Math.abs(speedDiff) * 0.9);
                 } else {
                     maxSpeedChange = Math.max(10, Math.abs(speedDiff) * 0.35);
                 }
@@ -90,10 +126,10 @@ export default function ChatComponent() {
 
             displaySpeedRef.current = newDisplaySpeed;
 
-            let charsPerFrame = Math.min(12, Math.max(1, Math.floor(newDisplaySpeed / 45)));
+            let charsPerFrame = Math.min(15, Math.max(1, Math.floor(newDisplaySpeed / 40)));
 
-            if (streamEndedRef.current && (queueLength <= 1 || bufferRef.current.length <= 20)) {
-                charsPerFrame = Math.min(20, Math.max(5, Math.floor(newDisplaySpeed / 25)));
+            if ((streamEndedRef.current || isThinkingComplete) && (queueLength <= 1 || bufferRef.current.length <= 20)) {
+                charsPerFrame = Math.min(30, Math.max(10, Math.floor(newDisplaySpeed / 15)));
             }
 
             const charsToShow = Math.min(bufferRef.current.length, charsPerFrame);
@@ -105,18 +141,18 @@ export default function ChatComponent() {
                 setLiveTextNormal((prev) => prev + chunk);
             }
 
-            let targetFPS = Math.min(80, Math.max(20, newDisplaySpeed / 3));
+            let targetFPS = Math.min(90, Math.max(25, newDisplaySpeed / 2.5));
 
-            if (streamEndedRef.current && (queueLength <= 1 || bufferRef.current.length <= 20)) {
-                targetFPS = Math.min(120, Math.max(40, newDisplaySpeed / 2));
+            if ((streamEndedRef.current || isThinkingComplete) && (queueLength <= 1 || bufferRef.current.length <= 20)) {
+                targetFPS = Math.min(180, Math.max(80, newDisplaySpeed / 1));
             }
 
             const frameDelay = 1000 / targetFPS;
-            const finalDelay = Math.max(frameDelay, 8);
+            const finalDelay = Math.max(frameDelay, 4);
 
             setTimeout(processQueue, finalDelay);
         } else if (tokenQueueRef.current.length > 0) {
-            setTimeout(processQueue, 5);
+            setTimeout(processQueue, 3);
         } else {
             runningRef.current = false;
         }
@@ -128,13 +164,18 @@ export default function ChatComponent() {
                 const [before, after] = token.split("<think>", 2);
                 if (before) tokenQueueRef.current.push({ text: before, thinking: inThinkingRef.current });
                 inThinkingRef.current = true;
+                thinkingEndedRef.current = false;
+                setIsThinkingComplete(false);
                 token = after;
             } else if (token.includes("</think>")) {
                 const [thinkingPart, after] = token.split("</think>", 2);
                 if (thinkingPart) tokenQueueRef.current.push({ text: thinkingPart, thinking: true });
                 inThinkingRef.current = false;
+                thinkingEndedRef.current = true;
                 tokenQueueRef.current.push({ text: "\n\n", thinking: false });
                 token = after;
+
+                setTimeout(() => checkThinkingComplete(), 10);
             } else {
                 tokenQueueRef.current.push({ text: token, thinking: inThinkingRef.current });
                 token = "";
@@ -164,6 +205,7 @@ export default function ChatComponent() {
         setLiveTextNormal("");
         setLiveTextThinking("");
         setTyping(true);
+        setIsThinkingComplete(false);
 
         streamStartTimeRef.current = 0;
         totalTokensReceivedRef.current = 0;
@@ -174,10 +216,11 @@ export default function ChatComponent() {
 
         if (eventSourceRef.current) eventSourceRef.current.close();
 
-        bufferRef.current = "";
+        bufferRef.current = [];
         tokenQueueRef.current = [];
         runningRef.current = false;
         inThinkingRef.current = false;
+        thinkingEndedRef.current = false;
 
         try {
             const res = await fetch("/chat", {
@@ -275,23 +318,6 @@ export default function ChatComponent() {
         };
     }, []);
 
-    const PreWithLabel = ({ children, lang, ...props }) => (
-        <pre {...props} className="rounded-4 py-2 px-3 relative">
-            <div className="d-flex align-items-center justify-content-between mb-4 ff-override">
-                <div>
-                    <span className="text-light fs-small">{lang}</span>
-                </div>
-                <div>
-                    <a className="link-light link-offset-2 link-underline-opacity-0 fs-small" href="#">
-                        <i className="bi bi-clipboard-check"></i>
-                        <span className="label">Kodu kopyala</span>
-                    </a>
-                </div>
-            </div>
-            {children}
-        </pre>
-    );
-
     return (
         <div>
             <div className="input-group">
@@ -314,7 +340,7 @@ export default function ChatComponent() {
                 <div className="output">
                     {liveTextThinking && (
                         <div className="thinking bg-adaptive pb-0 mb-3 border-start border-3 rounded fs-small">
-                            {inThinkingRef.current ? (
+                            {inThinkingRef.current || !isThinkingComplete ? (
                                 <div className="d-flex align-items-center mb-2 p-2 pb-0">
                                     <div>
                                         <span aria-hidden="true" className="spinner-border spinner-border-xs text-light"></span>
@@ -326,7 +352,10 @@ export default function ChatComponent() {
                             ) : (
                                 <div className="d-flex align-items-center mb-2 p-2 pb-0">
                                     <div>
-                                        <span className="text-light">Think complete</span>
+                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                    </div>
+                                    <div class="ms-2">
+                                        <span className="text-light">Thinking complete</span>
                                     </div>
                                 </div>
                             )}
@@ -340,7 +369,7 @@ export default function ChatComponent() {
                                     <MarkdownContent content={liveTextThinking} />
                                 </div>
                             </div>
-                            <div className="d-flex align-items-center justify-content-center border-top position-relative">
+                            <div className="bg-adaptive d-flex align-items-center justify-content-center border-top position-relative">
                                 <a
                                     href="#"
                                     className="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover mx-auto py-1"

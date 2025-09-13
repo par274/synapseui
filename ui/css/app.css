@@ -29,7 +29,7 @@
 @media (prefers-color-scheme: light) {
     :root {
         --bs-body-bg: #fff;
-        --bs-border-color: #bfbfbf;
+        --bs-border-color: #e1e1e1;
         --bs-dark-border-subtle: #2f2f2f;
         --bs-secondary-color: #8f8f8f;
         --bs-light-rgb: 10, 10, 10;
@@ -120,6 +120,21 @@ body {
 
 .w-60 {
     width: 60%;
+}
+
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-bottom: 1rem;
 }
 
 i.bi+.label:not(.d-none),

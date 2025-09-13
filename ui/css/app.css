@@ -29,7 +29,7 @@
 @media (prefers-color-scheme: light) {
     :root {
         --bs-body-bg: #fff;
-        --bs-border-color: #555;
+        --bs-border-color: #bfbfbf;
         --bs-dark-border-subtle: #2f2f2f;
         --bs-secondary-color: #8f8f8f;
         --bs-light-rgb: 10, 10, 10;
@@ -58,11 +58,24 @@
     box-shadow: none !important;
 }
 
+.spinner-border {
+    --bs-spinner-border-width: .15em;
+}
+
+.spinner-border-xs {
+    --bs-spinner-width: .75rem;
+    --bs-spinner-height: .75rem;
+}
+
 body {
     font-feature-settings: normal;
     font-family: var(--sy-ff);
     font-variation-settings: normal;
     font-size: .90rem;
+}
+
+.bg-adaptive {
+    background-color: var(--sy-bg-color-adaptive);
 }
 
 .bg-codeblock {
@@ -109,7 +122,8 @@ body {
     width: 60%;
 }
 
-i.bi+.label, .label+i.bi {
+i.bi+.label:not(.d-none),
+.label:not(.d-none)+i.bi {
     margin-left: .5rem;
 }
 
@@ -280,6 +294,11 @@ body:has(.side.collapsed) .new-chat>.head>div {
 
 .chat-root .output {
     overflow-anchor: auto;
+}
+
+.chat-root .output .thinking>div:nth-child(2) {
+    max-height: 80px;
+    overflow-x: auto;
 }
 
 pre>pre,

@@ -17,7 +17,7 @@ oo    .d8P    `888'     888   888  d8(  888   888   888 o.  )88b 888    .o  `88.
 More info for SynapseUI, because very very early stage. [Introduce for SynapseUI](https://github.com/par274/synapseui/blob/main/.github/introduce.md)
 
 ## Which LLM Manager's are supported?
-Currently fully support for `ollama` and `llama.cpp(llama-swap)`. You have to define it in the `.env` file in the `LLM_MANAGER` variable and choose which one Docker will install.
+Currently fully support for `ollama` and `llama.cpp(llama-swap)`. You have to define it in the `src/.env` file in the `APP_LLM_ADAPTER` variable and choose which one Docker will install.
 
 - [Ollama API](https://github.com/par274/synapseui/tree/main/src/platform/Native/src/Adapters/Ollama)
 - [llama.cpp API](https://github.com/par274/synapseui/tree/main/src/platform/Native/src/Adapters/LLamacpp)
@@ -30,7 +30,7 @@ We currently recommend `llama.cpp`. However, this requires providing a model inp
 Because llama.cpp feels faster and much more customizable now. Ollama is all set, but we still need a "sufficient" amount of customization. Ollama is like the end user, however in this project we want to enable the end user to use the chain model.
 
 ## GPU Support
-First you must change the `UTILIZATION` cpu(or cuda) to NVIDIA(nvgpu) or AMD ROCm(amdgpu).
+First you must change the `UTILIZATION` cpu(or cuda) to NVIDIA(nvgpu) or AMD ROCm(amdgpu) in `Docker .env` file.
 
 Full support GPU list: https://github.com/ollama/ollama/blob/main/docs/gpu.md
 

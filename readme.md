@@ -36,35 +36,58 @@ Full support GPU list: https://github.com/ollama/ollama/blob/main/docs/gpu.md
 
 The following steps are for Ubuntu.
 
-### NVIDIA
-`UTILIZATION=nvgpu`
-
-If you are going to use NVIDIA GPU, install NVIDIA Container Toolkit.
-
-```bash
-curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
-  && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
-    sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
-    sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
-
-# Optional
-sed -i -e '/experimental/ s/^#//g' /etc/apt/sources.list.d/nvidia-container-toolkit.list
-
-sudo apt-get update
-sudo apt-get install -y nvidia-container-toolkit
-sudo nvidia-ctk runtime configure --runtime=docker
-sudo systemctl restart docker
-```
-
-### NVIDIA & CPU
-`UTILIZATION=cuda`
+## NVIDIA & CPU
+* `UTILIZATION=cuda` for both support CPU/GPU in llama.cpp (llama-swap) 
+* `UTILIZATION=nvgpu` for GPU acceleration in Ollama
+* `UTILIZATION=cpu` for CPU in Ollama (llama-swap)
 
 If you're on the llama.cpp platform, you can use cuda directly. This allows you to use both the CPU and the NVIDIA GPU simultaneously.
 But you need to be careful, if you want to force it to GPU or CPU, you need to define the model like `gemma3:1b_cpu`(or cuda) in functions like `chat()` or `generate()`.
 
 More info for: https://github.com/par274/synapseui/tree/main/.docker/llama-swap/swap-config.yaml
 
-### AMD ROCm
+### NVIDIA GPU
+
+If you are going to use NVIDIA GPU, you must install NVIDIA Container Toolkit.
+
+For Ubuntu (example. Please follow official NVIDIA steps):
+https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
+
+```bash
+# Configure the production repository:
+curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+  && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
+    sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+    sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
+# Optionally, configure the repository to use experimental packages:
+sed -i -e '/experimental/ s/^#//g' /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
+# Update the packages list from the repository:
+sudo apt-get update
+
+# Install the NVIDIA Container Toolkit packages:
+export NVIDIA_CONTAINER_TOOLKIT_VERSION=1.17.8-1
+  sudo apt-get install -y \
+      nvidia-container-toolkit=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+      nvidia-container-toolkit-base=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+      libnvidia-container-tools=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+      libnvidia-container1=${NVIDIA_CONTAINER_TOOLKIT_VERSION}
+```
+
+### Configuring Docker
+```bash
+# Configure the container runtime by using the nvidia-ctk command:
+sudo nvidia-ctk runtime configure --runtime=docker
+
+# Restart the Docker daemon: (this is not necessary if you're in WSL)
+sudo systemctl restart docker
+
+# For testing
+nvidia-smi
+```
+
+### AMD ROCm (this is not testing, not recommend. Please use NVIDIA GPU or CPU.)
 `UTILIZATION=amdgpu`
 
 If you use AMD GPU and it has ROCm support, you can use it too. First, you need to install `amdgpu-dkms`. If you are already install ROCm, you have it. So you can skip this step.

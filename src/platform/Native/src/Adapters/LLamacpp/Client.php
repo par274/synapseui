@@ -358,4 +358,14 @@ final class Client extends AdapterClient implements ClientInterface
     {
         $this->utilization = 'cpu';
     }
+
+    /**
+     * Force use GPU instead of CPU.
+     *
+     * @return void
+     */
+    public function useForceGPU()
+    {
+        $this->utilization = 'cuda';
+    }
 }

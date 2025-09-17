@@ -120,6 +120,7 @@ class IndexController extends Controller
 
             $streamedRenderer->set(function () use ($llmAdapter, $request): void
             {
+                $llmAdapter->useForceGPU();
                 $llmAdapter->chat([
                     'model' => 'gemma3:1b', # for llama-swap
                     'messages' => [

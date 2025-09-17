@@ -97,4 +97,11 @@ interface ClientInterface
      * @return void
      */
     public function useCpu();
+
+    /**
+     * Force use GPU instead of CPU.
+     *
+     * @return void
+     */
+    public function useForceGPU();
 }

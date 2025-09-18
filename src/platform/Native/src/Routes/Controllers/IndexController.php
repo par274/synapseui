@@ -115,12 +115,16 @@ class IndexController extends Controller
                     $adapter->useCpu();
                 }
 
+                if ($manager->isGpuUtilize())
+                {
+                    $adapter->useForceGPU();
+                }
+
                 return $adapter;
             })();
 
             $streamedRenderer->set(function () use ($llmAdapter, $request): void
             {
-                $llmAdapter->useForceGPU();
                 $llmAdapter->chat([
                     'model' => 'gemma3:1b', # for llama-swap
                     'messages' => [

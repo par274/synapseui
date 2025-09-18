@@ -220,6 +220,16 @@ class BridgeConfig
     }
 
     /**
+     * Returns the selection utilization.
+     *
+     * @return string
+     */
+    public function getLLMUtilization(): string
+    {
+        return $this->get('APP_LLM_UTILIZATION', 'cpu');
+    }
+
+    /**
      * Aggregates the database connection parameters into a single array.
      *
      * @return array<string,mixed> Keys include `driver`, `host`, `port`,
@@ -236,7 +246,7 @@ class BridgeConfig
             'password' => $this->get('APP_DB_PASS'),
         ];
     }
-    
+
     /**
      * Builds a URL path for an asset relative to the configured assets base.
      *

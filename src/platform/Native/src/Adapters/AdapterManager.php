@@ -57,6 +57,20 @@ class AdapterManager
         return false;
     }
 
+    public function isGpuUtilize(): bool
+    {
+        if (
+            $this->config->getLLMUtilization() === 'gpu'
+            || $this->config->getLLMUtilization() === 'nvgpu'
+            || $this->config->getLLMUtilization() === 'cuda'
+        )
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public function setAdapter(string $key, callable $factory): void
     {
         $this->adapters[$key] = $factory;

@@ -1,6 +1,6 @@
 /**
  * MarkdownContent Component
- * 
+ *
  * Original content: https://github.com/shadcn-ui/ui
  *
  * This file was originally adapted from a `.tsx` implementation (TypeScript + React).
@@ -26,13 +26,18 @@
 
 import { useThemeMode } from "./theme.jsx";
 
+import PropTypes from "prop-types";
+
 import { memo, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
 import rehypeRaw from "rehype-raw";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { materialDark, materialLight } from "react-syntax-highlighter/dist/esm/styles/prism";
+import {
+    materialDark,
+    materialLight,
+} from "react-syntax-highlighter/dist/esm/styles/prism";
 
 import { marked } from "marked";
 
@@ -43,7 +48,10 @@ const PreWithLabel = ({ children, lang, ...props }) => (
                 <span className="text-light fs-small">{lang}</span>
             </div>
             <div>
-                <a className="link-light link-offset-2 link-underline-opacity-0 fs-small" href="#">
+                <a
+                    className="link-light link-offset-2 link-underline-opacity-0 fs-small"
+                    href="#"
+                >
                     <i className="bi bi-clipboard-check"></i>
                     <span className="label">Kodu kopyala</span>
                 </a>
@@ -53,10 +61,15 @@ const PreWithLabel = ({ children, lang, ...props }) => (
     </pre>
 );
 
+PreWithLabel.propTypes = {
+    children: PropTypes.node.isRequired,
+    lang: PropTypes.string,
+};
+
 function parseMarkdownIntoBlocks(markdown) {
     if (!markdown) return [];
     const tokens = marked.lexer(markdown);
-    return tokens.map(token => token.raw);
+    return tokens.map((token) => token.raw);
 }
 
 const MemoizedMarkdownBlock = memo(({ content, className }) => {
@@ -68,13 +81,13 @@ const MemoizedMarkdownBlock = memo(({ content, className }) => {
             remarkPlugins={[remarkGfm, remarkRehype]}
             rehypePlugins={[rehypeRaw]}
             components={{
-                table: ({ node, ...props }) => (
+                table: ({ ...props }) => (
                     <table className="table table-striped" {...props} />
                 ),
-                th: ({ node, ...props }) => <th scope="col" {...props} />,
-                td: ({ node, ...props }) => <td scope="row" {...props} />,
-                code: ({ node, inline, className, children, ...props }) => {
-                    const match = /language-(\w+)/.exec(className || '');
+                th: ({ ...props }) => <th scope="col" {...props} />,
+                td: ({ ...props }) => <td scope="row" {...props} />,
+                code: ({ inline, className, children, ...props }) => {
+                    const match = /language-(\w+)/.exec(className || "");
                     return !inline && match ? (
                         <SyntaxHighlighter
                             style={syntaxTheme}
@@ -90,7 +103,7 @@ const MemoizedMarkdownBlock = memo(({ content, className }) => {
                         </code>
                     );
                 },
-                a: ({ node, children, ...props }) => (
+                a: ({ children, ...props }) => (
                     <a
                         {...props}
                         className="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
@@ -100,7 +113,7 @@ const MemoizedMarkdownBlock = memo(({ content, className }) => {
                         <span className="label">{children}</span>
                         <i className="bi bi-box-arrow-up-right fs-small"></i>
                     </a>
-                )
+                ),
             }}
             className={className}
         >
@@ -108,6 +121,12 @@ const MemoizedMarkdownBlock = memo(({ content, className }) => {
         </ReactMarkdown>
     );
 });
+MemoizedMarkdownBlock.displayName = "MemoizedMarkdownBlock";
+
+MemoizedMarkdownBlock.propTypes = {
+    content: PropTypes.string.isRequired,
+    className: PropTypes.string,
+};
 
 export const MarkdownContent = memo(({ content, id }) => {
     const blocks = useMemo(() => parseMarkdownIntoBlocks(content || ""), [content]);
@@ -115,3 +134,9 @@ export const MarkdownContent = memo(({ content, id }) => {
         <MemoizedMarkdownBlock key={`${id}-block_${index}`} content={block} />
     ));
 });
+MarkdownContent.displayName = "MarkdownContent";
+
+MarkdownContent.propTypes = {
+    content: PropTypes.string,
+    id: PropTypes.string.isRequired,
+};

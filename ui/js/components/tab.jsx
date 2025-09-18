@@ -3,33 +3,38 @@ import { useEffect } from "react";
 export default function TabComponent() {
     useEffect(() => {
         const tabs = document.querySelectorAll('[js-ref="tab"]');
+        const main = document.querySelector(".main");
+
+        const openTab = (e, btn, tabHref) => {
+            e.preventDefault();
+
+            tabs.forEach(el => el.parentNode.classList.remove("active"));
+
+            const activeTabs = main.querySelectorAll(".active");
+            activeTabs.forEach(el => {
+                el.classList.add("d-none");
+                el.classList.remove("active");
+            });
+
+            btn.parentNode.classList.add("active");
+            tabHref?.classList.add("active");
+            tabHref?.classList.remove("d-none");
+        };
 
         tabs.forEach((btn) => {
-            const tabHrefClass = btn.getAttribute('js-tab-href');
+            const tabHrefClass = btn.getAttribute("js-tab-href");
             const tabHref = document.querySelector(`.${tabHrefClass}`);
 
-            const openTab = (e) => {
-                e.preventDefault();
+            const handleClick = (e) => openTab(e, btn, tabHref);
 
-                tabs.forEach(el => el.parentNode.classList.remove('active'));
+            btn.addEventListener("click", handleClick);
 
-                const activeTabs = document.querySelector('.main').querySelectorAll('.active');
-                activeTabs.forEach(el => {
-                    el.classList.add('d-none');
-                    el.classList.remove('active');
-                });
-
-                btn.parentNode.classList.add('active');
-                tabHref?.classList.add('active');
-                tabHref?.classList.remove('d-none');
-            };
-
-            btn.addEventListener("click", openTab);
+            btn._handler = handleClick;
         });
 
         return () => {
             tabs.forEach((btn) => {
-                btn.removeEventListener("click", openTab);
+                if (btn._handler) btn.removeEventListener("click", btn._handler);
             });
         };
     }, []);

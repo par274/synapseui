@@ -352,9 +352,9 @@ export default function ChatComponent() {
                             ) : (
                                 <div className="d-flex align-items-center mb-2 p-2 pb-0">
                                     <div>
-                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                        <i className="bi bi-check-circle-fill text-success"></i>
                                     </div>
-                                    <div class="ms-2">
+                                    <div className="ms-2">
                                         <span className="text-light">Thinking complete</span>
                                     </div>
                                 </div>

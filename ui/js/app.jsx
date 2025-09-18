@@ -8,7 +8,7 @@ import "bootstrap";
 import { Tooltip } from "bootstrap";
 
 (() => {
-    const App_ThemeSwitcher = (function () {
+    (function () {
         const htmlEl = document.documentElement;
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -25,7 +25,7 @@ import { Tooltip } from "bootstrap";
         prefersDark.addEventListener('change', setTheme);
     })();
 
-    const App_TooltipInit = (function () {
+    (function () {
         const tooltipTriggerList = document.querySelectorAll('[js-tooltip]');
 
         function initTooltip(el) {
@@ -59,7 +59,7 @@ import { Tooltip } from "bootstrap";
                     if (el.hasAttribute('js-tooltip-offset')) {
                         try {
                             return JSON.parse(el.getAttribute('js-tooltip-offset'));
-                        } catch (e) {
+                        } catch {
                             return [0, 6];
                         }
                     }
@@ -112,12 +112,12 @@ const AppInit = (function () {
 
     function LoadingSkeleton() {
         return (
-            <div class="skeleton-animation">
-                <div class="skeleton-effect"></div>
-                <div class="skeleton-effect lv1"></div>
-                <div class="skeleton-effect lv2"></div>
-                <div class="skeleton-effect lv3"></div>
-                <div class="skeleton-effect lv4"></div>
+            <div className="skeleton-animation">
+                <div className="skeleton-effect"></div>
+                <div className="skeleton-effect lv1"></div>
+                <div className="skeleton-effect lv2"></div>
+                <div className="skeleton-effect lv3"></div>
+                <div className="skeleton-effect lv4"></div>
             </div>
         );
     }

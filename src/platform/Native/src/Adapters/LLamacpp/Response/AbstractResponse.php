@@ -36,8 +36,13 @@ abstract class AbstractResponse
      *
      * @throws \JsonException If the JSON is invalid.
      */
-    public function json(): array
+    public function json(): array|string
     {
-        return json_decode($this->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        if (json_validate($this->getBody()))
+        {
+            return json_decode($this->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        return $this->getBody();
     }
 }

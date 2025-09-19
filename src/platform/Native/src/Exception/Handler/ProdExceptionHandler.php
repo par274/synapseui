@@ -31,7 +31,7 @@ final class ProdExceptionHandler implements HandlerInterface
     public function handle(Response $response, RenderScope $renderer, Throwable $e): int
     {
         $template = $this->templater->renderFromFile(
-            'Errors/prod_blank.tpl',
+            'Errors/prod_blank.tplx',
             [
                 'exception' => $e
             ]

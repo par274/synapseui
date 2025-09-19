@@ -1,4 +1,4 @@
-<sx:extends template="main.tpl" />
+<sx:extends template="main.tplx" />
 
 <sx:block name="appContainer">
     <div class="d-flex vh-100 vw-100">

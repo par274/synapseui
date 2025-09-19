@@ -41,7 +41,7 @@ final class PrettyPageHandler implements HandlerInterface
         $displayLines = $this->buildDisplayLines($file, $line, 10);
 
         $template = $this->templater->renderFromFile(
-            'Errors/exception.tpl',
+            'Errors/exception.tplx',
             [
                 'exception'      => $e,
                 'displayLines'   => $displayLines,

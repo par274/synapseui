@@ -60,7 +60,7 @@ class IndexController extends Controller
 
         if ($request->isMethod('GET'))
         {
-            $template = $templater->renderFromFile('index.tpl', [
+            $template = $templater->renderFromFile('index.tplx', [
                 'app' => [
                     'config' => $config,
                     'translator' => $translator,

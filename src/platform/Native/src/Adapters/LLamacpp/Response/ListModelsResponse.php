@@ -38,4 +38,21 @@ final class ListModelsResponse extends AbstractResponse
     {
         return $this->json()['data'] ?? [];
     }
+
+    /**
+     * Find a single model by its id.
+     *
+     * @param string $id
+     * @return array|null
+     */
+    public function findModel(string $id): ?array
+    {
+        $filtered = array_filter($this->models(), function ($model) use ($id)
+        {
+            return isset($model['id']) && $model['id'] === $id;
+        });
+
+        // array_filter returns an array with preserved keys, so we need reset()
+        return $filtered ? reset($filtered) : null;
+    }
 }

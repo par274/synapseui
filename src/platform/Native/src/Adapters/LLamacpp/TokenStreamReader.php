@@ -16,7 +16,7 @@ use JsonException;
 final class TokenStreamReader
 {
     private string $decoder = 'llamacpp';
-    
+
     private ResponseInterface $response;
     private $streamResource;
     private string $buffer = '';
@@ -63,12 +63,13 @@ final class TokenStreamReader
                 {
                     $json = json_decode($line, true, 512, JSON_THROW_ON_ERROR);
 
-                    $jsonData = "event: {$this->decoder}\ndata: " . json_encode($json, JSON_UNESCAPED_UNICODE) . "\n\n";
-                    ($this->callback)($jsonData);
+                    $chunk = json_encode($json, JSON_UNESCAPED_UNICODE);
+                    $payload = "data: {$chunk}\n\n";
+                    ($this->callback)($payload);
 
                     if (($json['choices'][0]['finish_reason'] ?? null) === 'stop')
                     {
-                        ($this->callback)("event: {$this->decoder}\ndata: END-OF-STREAM\n\n");
+                        ($this->callback)("data: [DONE]\n\n");
                         $this->stop = true;
                         break;
                     }

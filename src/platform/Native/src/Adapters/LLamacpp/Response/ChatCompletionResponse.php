@@ -4,55 +4,156 @@ declare(strict_types=1);
 
 namespace NativePlatform\Adapters\LLamacpp\Response;
 
+use Psr\Http\Message\ResponseInterface;
+use Iterator;
+
 /**
- * Response for `/v1/chat/completions` (single-shot mode).
+ * Response wrapper for the `/v1/chat/completions` endpoint.
+ *
+ * Handles both synchronous and streaming responses.
  */
-final class ChatCompletionResponse
+final class ChatCompletionResponse extends AbstractResponse implements Iterator
 {
-    /** ID of the request */
-    public string $id;
+    /** @var bool Whether the response is a stream */
+    private readonly bool $isStream;
 
-    /** Model name */
-    public string $model;
+    /** @var string Buffer for accumulating streamed data */
+    private string $buffer = '';
 
-    /** Creation timestamp (unix or ISO8601 depending on llama.cpp build) */
-    public string|int $created;
+    /** @var array Parsed lines from the buffer */
+    private array $lines = [];
 
-    /** Object type, e.g. 'chat.completion' */
-    public string $object;
+    /** @var int Iterator index */
+    private int $position = 0;
 
-    /** @var ChatChoice[] */
+    /** Collected choices (for non-stream sync responses) */
     public array $choices = [];
 
-    /** @var array<string, mixed>|null */
+    public string $id = '';
+    public string $model = '';
+    public string|int $created = 0;
+    public string $object = 'chat.completion';
     public ?array $usage = null;
 
-    private function __construct()
+    public function __construct(ResponseInterface $response, bool $isStream)
     {
+        parent::__construct($response);
+        $this->isStream = $isStream;
+
+        // hydrate immediately for synchronous response
+        if (!$isStream)
+        {
+            $this->hydrate($this->json());
+        }
     }
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public static function fromArray(array $data): self
+    /** Hydrate object from array for sync response */
+    private function hydrate(array $data): void
     {
-        $obj = new self();
         foreach ($data as $k => $v)
         {
             if ($k === 'choices' && is_array($v))
             {
                 foreach ($v as $choiceData)
                 {
-                    $obj->choices[] = ChatChoice::fromArray($choiceData);
+                    $this->choices[] = ChatChoice::fromArray($choiceData);
                 }
                 continue;
             }
-            if (property_exists($obj, $k))
+            if (property_exists($this, $k))
             {
-                $obj->$k = $v;
+                $this->$k = $v;
             }
         }
-        return $obj;
+    }
+
+    /** Iterator: rewind stream */
+    public function rewind(): void
+    {
+        $this->position = 0;
+        $this->buffer   = '';
+        $this->lines    = [];
+    }
+
+    /** Iterator: current item */
+    public function current(): array|null
+    {
+        if ($this->isStream)
+        {
+            return $this->lines[$this->position] ?? null;
+        }
+        return $this->json();
+    }
+
+    /** Iterator: key */
+    public function key(): int
+    {
+        return $this->position;
+    }
+
+    /** Iterator: advance */
+    public function next(): void
+    {
+        if ($this->isStream)
+        {
+            // read chunk
+            $chunk = $this->psrResponse->getBody()->read(1024);
+            if ($chunk === '')
+            {
+                return;
+            }
+
+            $this->buffer .= $chunk;
+
+            // SSE format typically "data: {json}\n\n"
+            while (($pos = strpos($this->buffer, "\n")) !== false)
+            {
+                $line        = substr($this->buffer, 0, $pos);
+                $this->buffer = substr($this->buffer, $pos + 1);
+
+                $line = trim($line);
+                if ($line === '' || !str_starts_with($line, 'data:'))
+                {
+                    continue;
+                }
+
+                $payload = substr($line, 5);
+                if ($payload === '[DONE]')
+                {
+                    $this->lines[] = ['done' => true];
+                    continue;
+                }
+
+                $decoded = json_decode($payload, true);
+                if ($decoded !== null)
+                {
+                    $this->lines[] = $decoded;
+                }
+            }
+        }
+
+        ++$this->position;
+    }
+
+    /** Iterator: validity check */
+    public function valid(): bool
+    {
+        if ($this->isStream)
+        {
+            return isset($this->lines[$this->position])
+                || !$this->psrResponse->getBody()->eof();
+        }
+        return $this->position === 0; // sync valid only once
+    }
+
+    /** Helper to get assistant message text (sync only) */
+    public function content(): ?string
+    {
+        if ($this->isStream)
+        {
+            return null;
+        }
+        return $this->choices[0]->message->content ?? null;
     }
 }
 
@@ -61,22 +162,14 @@ final class ChatCompletionResponse
  */
 final class ChatChoice
 {
-    /** Index of the choice */
     public int $index;
-
-    /** Finish reason, e.g. 'stop' */
     public ?string $finish_reason = null;
-
-    /** Chat message returned */
     public ChatMessage $message;
 
     private function __construct()
     {
     }
 
-    /**
-     * @param array<string, mixed> $data
-     */
     public static function fromArray(array $data): self
     {
         $obj = new self();
@@ -97,7 +190,7 @@ final class ChatChoice
 }
 
 /**
- * Simple representation of a chat message.
+ * Simple chat message object.
  */
 final class ChatMessage
 {
@@ -108,9 +201,6 @@ final class ChatMessage
     {
     }
 
-    /**
-     * @param array<string, mixed> $data
-     */
     public static function fromArray(array $data): self
     {
         $obj = new self();

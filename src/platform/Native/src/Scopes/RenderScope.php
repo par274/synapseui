@@ -20,9 +20,10 @@ class RenderScope
      *
      * @param string $type
      * @param array|string $content The body to send back.
+     * @param int $status response status code.
      * @return void
      */
-    public function finalRender(string $type, array|string $content): void
+    public function finalRender(string $type, array|string $content, int $status = 200): void
     {
         $contentType = [
             'type' => 'Content-Type',
@@ -36,12 +37,13 @@ class RenderScope
             }
         ];
 
-        if (str_starts_with($contentType['mime'], 'application/json'))
+        if (str_starts_with($contentType['mime'], 'application/json') && is_array($content))
         {
-            $content = json_encode($content);
+            $content = json_encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         }
 
         $this->response->headers->set($contentType['type'], $contentType['mime']);
+        $this->response->setStatusCode($status);
         $this->response->setContent($content);
 
         return;

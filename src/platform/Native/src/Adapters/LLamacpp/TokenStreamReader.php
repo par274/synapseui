@@ -67,7 +67,8 @@ final class TokenStreamReader
                     $payload = "data: {$chunk}\n\n";
                     ($this->callback)($payload);
 
-                    if (($json['choices'][0]['finish_reason'] ?? null) === 'stop')
+                    $finish = $json['choices'][0]['finish_reason'] ?? null;
+                    if (in_array($finish, ['stop', 'length', 'content_filter'], true))
                     {
                         ($this->callback)("data: [DONE]\n\n");
                         $this->stop = true;

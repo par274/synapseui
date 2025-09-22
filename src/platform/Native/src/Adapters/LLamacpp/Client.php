@@ -233,7 +233,7 @@ final class Client extends AdapterClient implements ClientInterface
     public function embed(array $payload): EmbeddingResponse
     {
         $options = ['json' => $payload];
-        $resp = $this->request('POST', '/embedding', $options);
+        $resp = $this->request('POST', '/v1/embeddings', $options);
         
         return new EmbeddingResponse($resp);
     }

@@ -13,17 +13,13 @@ export default function ChatComponent() {
     const [thinkingAreaExpanded, setThinkingAreaExpanded] = useState(false);
     const [isThinkingComplete, setIsThinkingComplete] = useState(false);
 
-    const eventSourceRef = useRef(null);
     const bufferRef = useRef([]);
     const tokenQueueRef = useRef([]);
     const runningRef = useRef(false);
     const endCheckTimerRef = useRef(null);
     const inThinkingRef = useRef(false);
     const thinkingEndedRef = useRef(false);
-    const lastTokenTimeRef = useRef(0);
     const characterRateRef = useRef(80);
-    const totalTokensReceivedRef = useRef(0);
-    const streamStartTimeRef = useRef(0);
     const displaySpeedRef = useRef(80);
     const streamEndedRef = useRef(false);
 
@@ -78,7 +74,6 @@ export default function ChatComponent() {
                     speedMultiplier = streamEndedRef.current ? 20 : 3.5;
                 }
             } else {
-                // Normal thinking durumu
                 if (streamEndedRef.current && queueLength === 0) {
                     speedMultiplier = 10;
                 } else if (queueLength > 20) {
@@ -207,113 +202,80 @@ export default function ChatComponent() {
         setTyping(true);
         setIsThinkingComplete(false);
 
-        streamStartTimeRef.current = 0;
-        totalTokensReceivedRef.current = 0;
-        lastTokenTimeRef.current = performance.now();
-        characterRateRef.current = 80;
-        displaySpeedRef.current = 80;
-        streamEndedRef.current = false;
-
-        if (eventSourceRef.current) eventSourceRef.current.close();
-
         bufferRef.current = [];
         tokenQueueRef.current = [];
         runningRef.current = false;
         inThinkingRef.current = false;
         thinkingEndedRef.current = false;
+        streamEndedRef.current = false;
 
         try {
-            const res = await fetch("/chat", {
+            const response = await fetch("/api/v1/chat/completions", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ chat_id: 123, message: msg }),
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer test-api-key"
+                },
+                body: JSON.stringify({
+                    model: "llamacpp:gemma3:1b-it",
+                    messages: [{ role: "user", content: msg }],
+                    stream: true
+                })
             });
 
-            if (!res.ok) throw new Error("Error for send messages.");
-            const { message } = await res.json();
+            if (!response.ok || !response.body) {
+                throw new Error("Stream request failed: " + response.status);
+            }
+            setTyping(false);
 
-            const es = new EventSource(`/chat?stream&message=${message}`);
-            eventSourceRef.current = es;
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+            let buffer = "";
 
-            const decoders = {
-                ollama: (p) => p.message?.content ?? p.token,
-                llamacpp: (p) => p.choices?.[0]?.delta?.content ?? "",
-            };
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
 
-            Object.entries(decoders).forEach(([adapter, decode]) => {
-                es.addEventListener(adapter, (event) => {
-                    setTyping(false);
+                buffer += decoder.decode(value, { stream: true });
 
-                    if (event.data === "END-OF-STREAM") {
-                        setTimeout(() => {
-                            flushBuffer();
-                        }, 50);
-                        es.close();
-                        return;
-                    }
+                const parts = buffer.split("\n\n");
+                buffer = parts.pop() ?? "";
 
-                    let payload;
-                    try {
-                        payload = JSON.parse(event.data);
-                    } catch (e) {
-                        console.error(`[${adapter}] JSON parse error`, e, event.data);
-                        payload = event.data;
-                    }
+                for (const part of parts) {
+                    const lines = part.split("\n");
+                    for (let rawLine of lines) {
+                        const line = rawLine.trim();
+                        if (!line) continue;
 
-                    let token;
-                    try {
-                        token = decode(payload);
-                        if (token === null || token === undefined) token = "";
-                        else if (typeof token !== "string") token = JSON.stringify(token);
-                    } catch (e) {
-                        console.error(`[${adapter}] Decode error`, e, payload);
-                        token = "";
-                    }
-
-                    const now = performance.now();
-
-                    if (totalTokensReceivedRef.current === 0) {
-                        streamStartTimeRef.current = now;
-                        lastTokenTimeRef.current = now;
-                    }
-
-                    totalTokensReceivedRef.current++;
-
-                    if (token.length > 0) {
-                        const streamDuration = (now - streamStartTimeRef.current) / 1000;
-                        const totalChars = (liveTextNormal.length + liveTextThinking.length + token.length);
-
-                        if (streamDuration > 0.1) {
-                            const overallSpeed = totalChars / streamDuration;
-                            characterRateRef.current = characterRateRef.current * 0.8 + overallSpeed * 0.2;
-                            characterRateRef.current = Math.min(300, Math.max(10, characterRateRef.current));
+                        if (line.startsWith("data:")) {
+                            const data = line.slice(5).trim();
+                            if (data === "[DONE]" || data === "END-OF-STREAM") {
+                                flushBuffer();
+                                return;
+                            }
+                            try {
+                                const parsed = JSON.parse(data);
+                                const token =
+                                    parsed.choices?.[0]?.delta?.content ??
+                                    parsed.message?.content ??
+                                    parsed.token ??
+                                    "";
+                                if (token) enqueueToken(token);
+                            } catch (e) {
+                                console.error("Stream parse error:", e, data);
+                            }
                         }
                     }
-
-                    lastTokenTimeRef.current = now;
-                    enqueueToken(token);
-                });
-            });
-
-            es.onclose = () => {
-                setTyping(false);
-                flushBuffer();
-            };
-
-            es.onerror = () => {
-                setTyping(false);
-                flushBuffer();
-            };
+                }
+            }
         } catch (err) {
             console.error("POST error:", err);
             setTyping(false);
-            return;
         }
     };
 
     useEffect(() => {
         return () => {
-            if (eventSourceRef.current) eventSourceRef.current.close();
             clearInterval(endCheckTimerRef.current);
         };
     }, []);

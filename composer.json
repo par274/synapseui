@@ -37,8 +37,8 @@
     },
     "require-dev": {
         "symfony/var-dumper": "^7",
-        "cweagans/composer-patches": "^1.7",
-        "symplify/vendor-patches": "^11.3"
+        "cweagans/composer-patches": "^2",
+        "symplify/vendor-patches": "^12"
     },
     "autoload": {
         "psr-4": {

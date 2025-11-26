@@ -16,6 +16,18 @@ oo    .d8P    `888'     888   888  d8(  888   888   888 o.  )88b 888    .o  `88.
 
 More info for SynapseUI, because very very early stage. [Introduce for SynapseUI](https://github.com/par274/synapseui/blob/main/.github/introduce.md)
 
+## File Permissions
+Some folders need writable permissions for the application to work properly.
+
+```bash
+mkdir -p logs
+mkdir -p src/internal/template_cache
+mkdir -p src/internal/logs
+
+# Development-safe permissions (required for Docker + WSL)
+sudo chmod -R 777 logs src/internal/template_cache src/internal/logs
+```
+
 ## Which LLM Manager's are supported?
 Currently fully support for `ollama` and `llama.cpp(llama-swap)`. You have to define it in the `src/.env` file in the `APP_LLM_ADAPTER` variable and choose which one Docker will install.
 

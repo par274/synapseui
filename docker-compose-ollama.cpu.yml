@@ -1,0 +1,17 @@
+services:
+  svc.synui_ollama:
+    image: ollama/ollama:latest
+    profiles: [manual]
+    volumes:
+      - ./.docker/ollama:/root/.ollama
+    container_name: svc.synui_ollama
+    tty: true
+    expose:
+      - 11434
+    networks:
+      - synui_app
+      - proxy
+
+networks:
+  proxy:
+    external: true

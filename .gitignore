@@ -1,3 +1,8 @@
+.docker/ollama/*
+.docker/llama-swap/models/*
+
+logs/*
+
 src/vendor
 src/internal/logs/*
 src/internal/template_cache/*

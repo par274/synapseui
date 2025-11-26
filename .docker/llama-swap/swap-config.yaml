@@ -1,0 +1,31 @@
+models:
+    "llamacpp:gemma3:1b-it_cpu":
+        cmd: |
+            /app/llama-server
+            --model /models/unsloth_gemma-3-1b-it-GGUF_gemma-3-1b-it-Q4_K_M.gguf
+            --host 0.0.0.0 --port 9503
+            --ctx-size 2048
+        proxy: "http://0.0.0.0:9503"
+    "llamacpp:gemma3:1b-it_cuda":
+        cmd: |
+            /app/llama-server
+            --model /models/unsloth_gemma-3-1b-it-GGUF_gemma-3-1b-it-Q4_K_M.gguf
+            --host 0.0.0.0 --port 9503
+            --ctx-size 2048
+            --device CUDA0
+        proxy: "http://0.0.0.0:9503"
+    "llamacpp:qwen3:4b-thinking-2507_cpu":
+        cmd: |
+            /app/llama-server
+            --model /models/unsloth_Qwen3-4B-Thinking-2507-GGUF_Qwen3-4B-Thinking-2507-Q4_K_M.gguf
+            --host 0.0.0.0 --port 9503
+            --ctx-size 2048
+        proxy: "http://0.0.0.0:9503"
+    "llamacpp:qwen3:4b-thinking-2507_cuda":
+        cmd: |
+            /app/llama-server
+            --model /models/unsloth_Qwen3-4B-Thinking-2507-GGUF_Qwen3-4B-Thinking-2507-Q4_K_M.gguf
+            --host 0.0.0.0 --port 9503
+            --ctx-size 2048
+            --device CUDA0
+        proxy: "http://0.0.0.0:9503"

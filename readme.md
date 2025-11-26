@@ -37,7 +37,7 @@ Full support GPU list: https://github.com/ollama/ollama/blob/main/docs/gpu.md
 The following steps are for Ubuntu.
 
 ## NVIDIA & CPU
-* `UTILIZATION=cuda` for both support CPU/GPU in llama.cpp (llama-swap) 
+* `UTILIZATION=cuda` for both support CPU/GPU in llama.cpp (llama-swap) (recommended)
 * `UTILIZATION=nvgpu` for GPU acceleration in Ollama
 * `UTILIZATION=cpu` for CPU in Ollama (llama-swap)
 
@@ -50,10 +50,15 @@ More info for: https://github.com/par274/synapseui/tree/main/.docker/llama-swap/
 
 If you are going to use NVIDIA GPU, you must install NVIDIA Container Toolkit.
 
-For Ubuntu (example. Please follow official NVIDIA steps):
+For Ubuntu, Debian (example. Please follow official NVIDIA steps):
 https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
 
 ```bash
+# Install the prerequisites for the instructions below:
+sudo apt-get update && sudo apt-get install -y --no-install-recommends \
+   curl \
+   gnupg2
+
 # Configure the production repository:
 curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
   && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
@@ -61,13 +66,13 @@ curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dear
     sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 
 # Optionally, configure the repository to use experimental packages:
-sed -i -e '/experimental/ s/^#//g' /etc/apt/sources.list.d/nvidia-container-toolkit.list
+sudo sed -i -e '/experimental/ s/^#//g' /etc/apt/sources.list.d/nvidia-container-toolkit.list
 
 # Update the packages list from the repository:
 sudo apt-get update
 
 # Install the NVIDIA Container Toolkit packages:
-export NVIDIA_CONTAINER_TOOLKIT_VERSION=1.17.8-1
+export NVIDIA_CONTAINER_TOOLKIT_VERSION=1.18.0-1
   sudo apt-get install -y \
       nvidia-container-toolkit=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
       nvidia-container-toolkit-base=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
@@ -84,7 +89,7 @@ sudo nvidia-ctk runtime configure --runtime=docker
 sudo systemctl restart docker
 
 # For testing
-nvidia-smi
+sudo docker run --rm --runtime=nvidia --gpus all ubuntu nvidia-smi
 ```
 
 ### AMD ROCm (this is not testing, not recommend. Please use NVIDIA GPU or CPU.)

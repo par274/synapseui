@@ -20,12 +20,22 @@ More info for SynapseUI, because very very early stage. [Introduce for SynapseUI
 Some folders need writable permissions for the application to work properly.
 
 ```bash
+# Create required directories
 mkdir -p logs
 mkdir -p src/internal/template_cache
 mkdir -p src/internal/logs
 
-# Development-safe permissions (required for Docker + WSL)
-sudo chmod -R 777 logs src/internal/template_cache src/internal/logs
+# Set ownership to web server user
+sudo chown -R www-data:www-data logs src/internal/template_cache src/internal/logs
+
+# Set directory permissions to 755 for general directories
+sudo find logs src/internal/template_cache src/internal/logs -type d -exec chmod 755 {} \;
+
+# Set file permissions to 644 for any files inside
+sudo find logs src/internal/template_cache src/internal/logs -type f -exec chmod 644 {} \;
+
+# Make writable directories (cache/logs) writable by owner and web server
+sudo chmod -R 770 logs src/internal/template_cache src/internal/logs
 ```
 
 ## Which LLM Manager's are supported?

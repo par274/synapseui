@@ -20,8 +20,8 @@ This project is still in the early stages of development, but it already contain
 ## Environment
 This project is designed to run comfortably in both Linux environments and Windows setups using WSL. Either option works without issues. We also provide ready-to-use Docker files, so most of the environment setup is handled automatically, and you can start working with minimal configuration.
 
-Before starting the AI services, make sure to choose your GPU or CPU setup as described below.  
-After that, the LLaMA and Ollama containers need to be started manually by specifying their service names.
+Before starting the AI services, make sure to choose your [GPU or CPU setup](#gpu-support) as described below.  
+After that, the ggml's llama.cpp and Ollama containers need to be started manually by specifying their service names. 
 
 Docker commands. You must write the commands in the root directory and have Docker Engine installed.
 ```bash

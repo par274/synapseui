@@ -14,7 +14,9 @@ oo    .d8P    `888'     888   888  d8(  888   888   888 o.  )88b 888    .o  `88.
 ---
 ## Getting Started
 
-More info for SynapseUI, because very very early stage. [Introduce for SynapseUI](https://github.com/par274/synapseui/blob/main/.github/introduce.md)
+This project is still in the early stages of development, but it already contains a significant amount of code and foundational features. Many parts are still being refined or expanded as development continues.
+
+[For an introduction, check out](https://github.com/par274/synapseui/blob/main/.github/introduce.md)
 
 ## File Permissions
 Some folders need writable permissions for the application to work properly.

@@ -13,10 +13,36 @@ oo    .d8P    `888'     888   888  d8(  888   888   888 o.  )88b 888    .o  `88.
 ```
 ---
 ## Getting Started
-
 This project is still in the early stages of development, but it already contains a significant amount of code and foundational features. Many parts are still being refined or expanded as development continues.
 
 [For an introduction, check out](https://github.com/par274/synapseui/blob/main/.github/introduce.md)
+
+## Environment
+This project is designed to run comfortably in both Linux environments and Windows setups using WSL. Either option works without issues. We also provide ready-to-use Docker files, so most of the environment setup is handled automatically, and you can start working with minimal configuration.
+
+Before starting the AI services, make sure to choose your GPU or CPU setup as described below.  
+After that, the LLaMA and Ollama containers need to be started manually by specifying their service names.
+
+Docker commands. You must write the commands in the root directory and have Docker Engine installed.
+```bash
+# App up
+docker compose up -d
+
+# For llama.cpp (llama-swap)
+docker compose up svc.synui_llama-swap -d
+
+# For Ollama
+docker compose up svc.synui_ollama -d
+```
+
+### Environment Files
+There are two `.env` files used in this project, each serving a different purpose:
+
+- The [`.env`](https://github.com/par274/synapseui/blob/main/.env) file in the project root contains Docker-related settings. The options you’ll adjust most often here are the GPU/CPU selection and the AI adapter you want to use.
+
+- The [`src/.env`](https://github.com/par274/synapseui/blob/main/src/.env) file holds the application’s own configuration. This is where you define database settings and, again, choose the adapter the application should work with.
+
+Both files include comments that explain each option, so following the instructions inside them is usually enough to get everything set up correctly.
 
 ## File Permissions
 Some folders need writable permissions for the application to work properly.
@@ -56,9 +82,9 @@ Because llama.cpp feels faster and much more customizable now. Ollama is all set
 ## GPU Support
 First you must change the `UTILIZATION` cpu(or cuda) to NVIDIA(nvgpu) or AMD ROCm(amdgpu) in `Docker .env` file.
 
-Full support GPU list: https://github.com/ollama/ollama/blob/main/docs/gpu.md
+Both llama.cpp and Ollama support GPU utilization.
 
-The following steps are for Ubuntu.
+The steps below are for Ubuntu and Debian. However, I recommend installing according to the vendor's wiki page.
 
 ## NVIDIA & CPU
 * `UTILIZATION=cuda` for both support CPU/GPU in llama.cpp (llama-swap) (recommended)
@@ -121,9 +147,12 @@ sudo docker run --rm --runtime=nvidia --gpus all ubuntu nvidia-smi
 
 If you use AMD GPU and it has ROCm support, you can use it too. First, you need to install `amdgpu-dkms`. If you are already install ROCm, you have it. So you can skip this step.
 
+For Ubuntu, Debian (example. Please follow official AMD steps):
+https://rocm.docs.amd.com/projects/install-on-linux/en/latest/install/quick-start.html#rocm-install-quick
+
 ```bash
-wget https://repo.radeon.com/amdgpu-install/6.4.1/ubuntu/noble/amdgpu-install_6.4.60401-1_all.deb
-sudo apt install ./amdgpu-install_6.4.60401-1_all.deb
+wget https://repo.radeon.com/amdgpu-install/7.1.1/ubuntu/noble/amdgpu-install_7.1.1.70101-1_all.deb
+sudo apt install ./amdgpu-install_7.1.1.70101-1_all.deb
 sudo apt update
 sudo apt install python3-setuptools python3-wheel
 sudo usermod -a -G render,video $LOGNAME # Add the current user to the render and video groups

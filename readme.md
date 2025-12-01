@@ -131,9 +131,9 @@ sudo apt install rocm
 And reboot your system.
 
 ## Framework
-This software was developed with a custom application framework called Synaptic Framework(Par3).
+Runs on a custom solution called the Synaptic Framework (Par3).
 
-This application framework is built to use a custom template engine, separate services with a container structure, and generally create native applications.
+This application framework is designed around a modular architecture and uses a custom template engine whose syntax is inspired by XenForo 2 and vBulletin, while its template architecture follows the design principles and evolution of Twig. It separates core functionality into independent services managed by a container system, enabling clean organization, extensibility, and the creation of efficient native-style applications. It also aims to integrate React and PHP in a hybrid structure that unifies modern reactive interfaces with traditional server-side execution.
 
 ## Packages used in this project
 - [Symfony/http-foundation](https://symfony.com/doc/current/components/http_foundation.html)

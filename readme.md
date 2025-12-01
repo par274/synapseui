@@ -141,5 +141,6 @@ This application framework is designed around a modular architecture and uses a 
 - [Nikic/fast-route](https://github.com/nikic/FastRoute)
 - [Doctrine/DBAL](https://github.com/doctrine/dbal)
 
-### License
-SynapseUI is a open-source project and licensed under the MIT License(MIT). Please read the [license file](https://github.com/par274/synapseui/blob/main/license.md).
+## License
+
+The software in this repository is released under the **GNU General Public License v2 (GPL-2.0) or later** from the Free Software Foundation. You can also [read the text of the license](https://github.com/par274/synapseui/blob/main/license.md).

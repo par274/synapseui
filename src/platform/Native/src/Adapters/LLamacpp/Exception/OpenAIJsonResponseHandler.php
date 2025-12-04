@@ -5,7 +5,9 @@ namespace NativePlatform\Adapters\LLamacpp\Exception;
 use NativePlatform\Exception\Handler\HandlerInterface;
 use NativePlatform\Adapters\LLamacpp\Exception\AdapterNotWorkingException;
 use NativePlatform\Scopes\RenderScope;
+
 use Symfony\Component\HttpFoundation\Response;
+
 use Throwable;
 
 final class OpenAIJsonResponseHandler implements HandlerInterface

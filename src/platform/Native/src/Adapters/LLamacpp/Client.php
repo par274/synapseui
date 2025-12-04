@@ -5,21 +5,25 @@ declare(strict_types=1);
 namespace NativePlatform\Adapters\LLamacpp;
 
 use NativePlatform\Adapters\AdapterClient;
-use NativePlatform\Adapters\LLamacpp\StreamIterator;
-use NativePlatform\Adapters\LLamacpp\TokenStreamReader;
-use NativePlatform\Adapters\LLamacpp\ClientInterface;
-use NativePlatform\Adapters\LLamacpp\Exception\AdapterNotWorkingException;
-use NativePlatform\Adapters\LLamacpp\Response\HealthResponse;
-use NativePlatform\Adapters\LLamacpp\Response\TokenizeResponse;
-use NativePlatform\Adapters\LLamacpp\Response\DetokenizeResponse;
-use NativePlatform\Adapters\LLamacpp\Response\EmbeddingResponse;
-use NativePlatform\Adapters\LLamacpp\Response\ListModelsResponse;
-use NativePlatform\Adapters\LLamacpp\Response\CompletionResponse;
-use NativePlatform\Adapters\LLamacpp\Response\ChatCompletionResponse;
+use NativePlatform\Adapters\LLamacpp\{
+    Exception\AdapterNotWorkingException,
+    StreamIterator,
+    TokenStreamReader,
+    ClientInterface,
+    Response\HealthResponse,
+    Response\TokenizeResponse,
+    Response\DetokenizeResponse,
+    Response\EmbeddingResponse,
+    Response\ListModelsResponse,
+    Response\CompletionResponse,
+    Response\ChatCompletionResponse
+};
 
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\{
+    GuzzleException,
+    RequestException,
+    ConnectException
+};
 
 use Psr\Http\Message\ResponseInterface;
 

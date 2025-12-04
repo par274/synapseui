@@ -156,36 +156,27 @@ final class ExceptionManager
 
         foreach ($this->handlers as $handler)
         {
-            if ($e instanceof AdapterNotWorkingException)
+            // Always allow LogHandler and AdapterNotWorkingException handlers
+            if ($handler instanceof LogHandler || $e instanceof AdapterNotWorkingException)
             {
                 $result = $handler->handle($this->response, $this->renderer, $e);
                 if ($result === HandlerInterface::QUIT)
                 {
                     return;
                 }
+                continue; // skip forcePushHandler check
+            }
+
+            // Force push handler filtering
+            if ($this->forcePushHandler !== null && !($handler instanceof $this->forcePushHandler))
+            {
                 continue;
             }
 
-            if ($this->forcePushHandler !== null)
+            $result = $handler->handle($this->response, $this->renderer, $e);
+            if ($result === HandlerInterface::QUIT)
             {
-                if ($handler instanceof $this->forcePushHandler || $handler instanceof LogHandler)
-                {
-                    $result = $handler->handle($this->response, $this->renderer, $e);
-
-                    if ($result === HandlerInterface::QUIT)
-                    {
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                $result = $handler->handle($this->response, $this->renderer, $e);
-
-                if ($result === HandlerInterface::QUIT)
-                {
-                    return;
-                }
+                return;
             }
         }
 

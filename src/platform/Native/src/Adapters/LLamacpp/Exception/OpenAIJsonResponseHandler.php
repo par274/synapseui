@@ -10,16 +10,21 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Throwable;
 
-final class OpenAIJsonResponseHandler extends AdapterNotWorkingException implements HandlerInterface
+final class OpenAIJsonResponseHandler implements HandlerInterface
 {
     public function handle(Response $response, RenderScope $renderer, Throwable $e): int
     {
+        if (!($e instanceof AdapterNotWorkingException))
+        {
+            return HandlerInterface::CONTINUE;
+        }
+
         $payload = [
             'error' => [
-                'message' => 'The server is currently unavailable.',
+                'message' => $e->getMessage() ?: 'The server is currently unavailable.',
                 'type' => 'service_unavailable',
                 'param' => null,
-                'code' => 'server_error',
+                'code' => 'connect_error',
             ]
         ];
 
@@ -27,6 +32,6 @@ final class OpenAIJsonResponseHandler extends AdapterNotWorkingException impleme
         $response->setStatusCode(503);
         $renderer->sendBuffer();
 
-        return HandlerInterface::QUIT;
+        return HandlerInterface::QUIT; // stop chain
     }
 }

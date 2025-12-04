@@ -21,10 +21,10 @@ final class OpenAIJsonResponseHandler implements HandlerInterface
 
         $payload = [
             'error' => [
-                'message' => $e->getMessage() ?: 'The server is currently unavailable.',
+                'message' => 'The server is currently unavailable.',
                 'type' => 'service_unavailable',
                 'param' => null,
-                'code' => 'connect_error',
+                'code' => 'server_error',
             ]
         ];
 

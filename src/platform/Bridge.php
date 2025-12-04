@@ -132,7 +132,6 @@ class Bridge
             $logHandler = new LogHandler($logger);
 
             $manager->pushHandler($logHandler);
-            $manager->pushHandler(new OpenAIJsonResponseHandler());
             //$manager->pushHandler(new PlainTextHandler());
             //$manager->pushHandler(new JsonResponseHandler());
             $manager->pushHandler(new PrettyPageHandler($c->get('app:templater')));
@@ -146,6 +145,8 @@ class Bridge
             };
 
             $manager->register();
+
+            return $manager;
         })()->bootstrap();
 
         $this->container->set('app:translations', function (ServiceContainer $c)
@@ -200,11 +201,17 @@ class Bridge
         {
             /** @var BridgeConfig $config */
             $config = $c->get('app:config');
-            return match ($config->getLLMAdapterMethod())
+            $adapter = match ($config->getLLMAdapterMethod())
             {
                 'client' => new LLamacppAdapterClient(),
                 default => new LLamacppAdapterClient()
             };
+
+            /** @var ExceptionManager $manager */
+            $manager = $c->get('app:exception');
+            $manager->pushHandlerAfter(new OpenAIJsonResponseHandler(), LogHandler::class);
+
+            return $adapter;
         });
         $this->container->set('app:llm.adapter_manager', function (ServiceContainer $c)
         {

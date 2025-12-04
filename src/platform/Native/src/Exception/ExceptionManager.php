@@ -62,6 +62,35 @@ final class ExceptionManager
     }
 
     /**
+     * Push a handler immediately after a specified existing handler in the stack.
+     *
+     * If the specified class is not found, the handler will be appended at the end.
+     * If no class is specified, the handler will be appended at the end as well.
+     *
+     * @param HandlerInterface $handler The handler instance to add.
+     * @param string|null $afterClass Fully qualified class name of the handler after which to insert. Nullable.
+     * @return void
+     */
+    public function pushHandlerAfter(HandlerInterface $handler, ?string $afterClass = null): void
+    {
+        if ($afterClass === null)
+        {
+            $this->handlers[] = $handler;
+            return;
+        }
+
+        $index = array_search(true, array_map(fn($h) => $h instanceof $afterClass, $this->handlers), true);
+
+        if ($index === false)
+        {
+            $this->handlers[] = $handler;
+            return;
+        }
+
+        array_splice($this->handlers, $index + 1, 0, [$handler]);
+    }
+
+    /**
      * Remove the top handler.
      *
      * @return HandlerInterface|null

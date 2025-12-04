@@ -3,5 +3,16 @@
         {
             "path": "."
         }
-    ]
+    ],
+    "settings": {
+        "php.suggest.basic": false,
+        "php.validate.enable": false,
+        "intelephense.environment.phpVersion": "8.4",
+        "files.associations": {
+            "*.tplx": "html"
+        },
+        "emmet.includeLanguages": {
+            "tplx": "html"
+        }
+    }
 }

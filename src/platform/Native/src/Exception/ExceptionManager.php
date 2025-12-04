@@ -7,7 +7,7 @@ namespace NativePlatform\Exception;
 use NativePlatform\Exception\Handler\HandlerInterface;
 use NativePlatform\Scopes\RenderScope;
 use NativePlatform\Exception\Handler\LogHandler;
-use NativePlatform\Adapters\LLamacpp\Exception\OpenAIJsonResponseHandler;
+use NativePlatform\Exception\Handler\AdapterNotWorkingException;
 
 use Throwable;
 
@@ -156,7 +156,7 @@ final class ExceptionManager
 
         foreach ($this->handlers as $handler)
         {
-            if ($handler instanceof OpenAIJsonResponseHandler)
+            if ($e instanceof AdapterNotWorkingException)
             {
                 $result = $handler->handle($this->response, $this->renderer, $e);
                 if ($result === HandlerInterface::QUIT)

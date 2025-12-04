@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace NativePlatform\Adapters\LLamacpp;
 
 use NativePlatform\Adapters\AdapterClient;
+use NativePlatform\Exception\Handler\AdapterNotWorkingException;
 use NativePlatform\Adapters\LLamacpp\{
-    Exception\AdapterNotWorkingException,
     StreamIterator,
     TokenStreamReader,
     ClientInterface,

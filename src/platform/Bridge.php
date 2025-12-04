@@ -18,7 +18,8 @@ use NativePlatform\SubContainer\{
 use NativePlatform\Adapters\{
     AdapterManager as LLMAdapterManager,
     Ollama\Client as OllamaAdapterClient,
-    LLamacpp\Client as LLamacppAdapterClient
+    LLamacpp\Client as LLamacppAdapterClient,
+    LLamacpp\Exception\OpenAIJsonResponseHandler
 };
 use NativePlatform\Scopes\{
     RenderScope,
@@ -131,6 +132,7 @@ class Bridge
             $logHandler = new LogHandler($logger);
 
             $manager->pushHandler($logHandler);
+            $manager->pushHandler(new OpenAIJsonResponseHandler());
             //$manager->pushHandler(new PlainTextHandler());
             //$manager->pushHandler(new JsonResponseHandler());
             $manager->pushHandler(new PrettyPageHandler($c->get('app:templater')));

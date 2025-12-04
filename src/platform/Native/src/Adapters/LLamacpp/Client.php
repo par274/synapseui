@@ -8,6 +8,7 @@ use NativePlatform\Adapters\AdapterClient;
 use NativePlatform\Adapters\LLamacpp\StreamIterator;
 use NativePlatform\Adapters\LLamacpp\TokenStreamReader;
 use NativePlatform\Adapters\LLamacpp\ClientInterface;
+use NativePlatform\Adapters\LLamacpp\Exception\AdapterNotWorkingException;
 use NativePlatform\Adapters\LLamacpp\Response\HealthResponse;
 use NativePlatform\Adapters\LLamacpp\Response\TokenizeResponse;
 use NativePlatform\Adapters\LLamacpp\Response\DetokenizeResponse;
@@ -16,7 +17,10 @@ use NativePlatform\Adapters\LLamacpp\Response\ListModelsResponse;
 use NativePlatform\Adapters\LLamacpp\Response\CompletionResponse;
 use NativePlatform\Adapters\LLamacpp\Response\ChatCompletionResponse;
 
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ConnectException;
+
 use Psr\Http\Message\ResponseInterface;
 
 /** @example for llama.cpp */
@@ -158,7 +162,7 @@ use Psr\Http\Message\ResponseInterface;
 final class Client extends AdapterClient implements ClientInterface
 {
     protected string $utilization = 'cuda';
-    
+
     /**
      * Internal helper that wraps the raw Guzzle request and handles exceptions.
      *
@@ -174,10 +178,26 @@ final class Client extends AdapterClient implements ClientInterface
         {
             return $this->client->request($method, $uri, $options);
         }
+        catch (ConnectException $e)
+        {
+            throw new AdapterNotWorkingException(
+                $e->getMessage(),
+                0,
+                $e
+            );
+        }
         catch (RequestException $e)
         {
-            throw new \RuntimeException(
-                'llama.cpp request failed: ' . $e->getMessage(),
+            throw new AdapterNotWorkingException(
+                $e->getMessage(),
+                0,
+                $e
+            );
+        }
+        catch (GuzzleException $e)
+        {
+            throw new AdapterNotWorkingException(
+                $e->getMessage(),
                 0,
                 $e
             );
@@ -192,7 +212,7 @@ final class Client extends AdapterClient implements ClientInterface
     public function health(): HealthResponse
     {
         $resp = $this->request('GET', '/health');
-        
+
         return new HealthResponse($resp);
     }
 
@@ -206,7 +226,7 @@ final class Client extends AdapterClient implements ClientInterface
     {
         $options = ['json' => $payload];
         $resp = $this->request('POST', '/tokenize', $options);
-        
+
         return new TokenizeResponse($resp);
     }
 
@@ -220,7 +240,7 @@ final class Client extends AdapterClient implements ClientInterface
     {
         $options = ['json' => $payload];
         $resp = $this->request('POST', '/detokenize', $options);
-        
+
         return new DetokenizeResponse($resp);
     }
 
@@ -234,7 +254,7 @@ final class Client extends AdapterClient implements ClientInterface
     {
         $options = ['json' => $payload];
         $resp = $this->request('POST', '/v1/embeddings', $options);
-        
+
         return new EmbeddingResponse($resp);
     }
 
@@ -246,7 +266,7 @@ final class Client extends AdapterClient implements ClientInterface
     public function listModels(): ListModelsResponse
     {
         $resp = $this->request('GET', '/v1/models');
-        
+
         return new ListModelsResponse($resp);
     }
 
@@ -286,12 +306,12 @@ final class Client extends AdapterClient implements ClientInterface
             $options['json']['stream'] = true;
             $options['stream'] = true;
             $resp = $this->request('POST', '/v1/completions', $options);
-            
+
             return new StreamIterator($resp);
         }
 
         $resp = $this->request('POST', '/v1/completions', $options);
-        
+
         return new CompletionResponse($resp, false);
     }
 
@@ -335,10 +355,10 @@ final class Client extends AdapterClient implements ClientInterface
         }
 
         $resp = $this->request('POST', '/v1/chat/completions', $options);
-        
+
         return new ChatCompletionResponse($resp, false);
     }
-    
+
     /**
      * Use CPU instead of NVIDIA GPU.
      *

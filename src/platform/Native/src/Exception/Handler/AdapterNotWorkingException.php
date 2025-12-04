@@ -4,6 +4,6 @@ namespace NativePlatform\Exception\Handler;
 
 use RuntimeException;
 
-class AdapterNotWorkingException extends RuntimeException
+final class AdapterNotWorkingException extends RuntimeException
 {
 }

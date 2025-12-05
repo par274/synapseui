@@ -23,7 +23,8 @@
                 "redhat.vscode-yaml",
                 "rexshi.phpdoc-comment-vscode-plugin",
                 "dsznajder.es7-react-js-snippets",
-                "dbaeumer.vscode-eslint"
+                "dbaeumer.vscode-eslint",
+                "GitHub.vscode-github-actions"
             ]
         }
     }

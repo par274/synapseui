@@ -1,6 +1,15 @@
 name: Build Pipeline
 on:
   push:
+    paths-ignore:
+      - '**/*.md'
+      - '**/.gitignore'
+      - '**/readme.md'
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   prepare:

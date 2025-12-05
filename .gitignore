@@ -6,5 +6,8 @@ logs/*
 src/vendor
 src/internal/logs/*
 src/internal/template_cache/*
+src/platform/Web2/assets/app.bundle.js.map
+src/platform/Web2/assets/app.bundle.js
+src/platform/Web2/assets/app.bundle.css
 
 node_modules

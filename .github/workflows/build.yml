@@ -1,7 +1,9 @@
 name: Build Pipeline
 on:
   push:
-  workflow_dispatch:
+    paths-ignore:
+      - '**/*.md'
+      - '**/.gitignore'
 
 concurrency:
   group: ci-${{ github.event_name }}-${{ github.ref }}

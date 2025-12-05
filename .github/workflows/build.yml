@@ -1,0 +1,44 @@
+name: Build & Deploy
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # PHP 8.4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, intl, pgsql, pdo_pgsql, zip, xsl, gd
+
+      - name: Composer install
+        run: composer install --no-interaction --prefer-dist --no-ansi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install JS deps
+        run: npm install
+
+      - name: Build frontend (Rollup)
+        run: npm run build
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            src/platform/Web2/assets/app.bundle.js
+            src/platform/Web2/assets/app.bundle.css
+            vendor
+            composer.lock
+            composer.json

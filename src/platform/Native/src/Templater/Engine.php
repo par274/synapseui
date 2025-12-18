@@ -51,7 +51,13 @@ class Engine
 
     protected function render(TemplateRegistry $registry, array $context = []): string
     {
-        $context = array_merge($this->globalContext, $context);
+        $context = [
+            ...$context,
+            'app' => [
+                ...($this->globalContext['app'] ?? []),
+                ...($context['app'] ?? []),
+            ],
+        ];
 
         if (!$registry->has())
         {

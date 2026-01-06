@@ -37,21 +37,18 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libpng-dev \
     libjpeg-dev \
-    libicu-dev  \
-    libonig-dev \
+    libicu-dev \
     libxslt1-dev \
-	libpq-dev \
-    acl \
-    && echo 'alias sf="php bin/console"' >> ~/.bashrc \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g npm@latest
+    libpq-dev \
+    libonig-dev \
+    acl
 
-RUN docker-php-ext-configure gd --with-jpeg --with-freetype 
+RUN docker-php-ext-configure gd --with-jpeg --with-freetype \
+ && docker-php-ext-install gd 
 	
 RUN docker-php-ext-install pdo pdo_pgsql
 RUN docker-php-ext-install \
-    zip xsl gd intl opcache exif mbstring gd
+    zip xsl intl exif mbstring
 
 # Set timezone
 RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} > /etc/timezone \

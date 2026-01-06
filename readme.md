@@ -11,6 +11,10 @@ oo    .d8P    `888'     888   888  d8(  888   888   888 o.  )88b 888    .o  `88.
            .o..P'                             888                                              
            `Y8P'                             o888o                                              
 ```
+
+> [!WARNING]
+> This project is in early development and is not ready for production use.
+
 ---
 ## Getting Started
 This project is still in the early stages of development, but it already contains a significant amount of code and foundational features. Many parts are still being refined or expanded as development continues.
